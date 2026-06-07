@@ -75,11 +75,14 @@ export function RecentTransactions() {
           const Icon =
             icons[
               transaction.title as keyof typeof icons
-            ]
+            ] ?? Wallet
+
+          const isExpense =
+            transaction.type === 'expense'
 
           return (
             <div
-              key={transaction.title}
+              key={transaction.id}
               className="
                 flex
                 items-center
@@ -105,7 +108,7 @@ export function RecentTransactions() {
                     justify-center
                     rounded-2xl
                     ${
-                      transaction.expense
+                      isExpense
                         ? 'bg-destructive/10 text-destructive'
                         : 'bg-income/10 text-income'
                     }
@@ -134,13 +137,19 @@ export function RecentTransactions() {
                 className={`
                   font-medium
                   ${
-                    transaction.expense
+                    isExpense
                       ? 'text-destructive'
                       : 'text-income'
                   }
                 `}
               >
-                {transaction.value}
+                {new Intl.NumberFormat(
+                  'pt-BR',
+                  {
+                    style: 'currency',
+                    currency: 'BRL',
+                  },
+                ).format(transaction.amount)}
               </p>
             </div>
           )
