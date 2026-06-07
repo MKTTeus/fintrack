@@ -1,10 +1,7 @@
-import { AppRoutes } from '@/routes'
-import { supabase } from '@/lib/supabase'
+import { RouterProvider } from 'react-router-dom'
 
-import { TestAuthPage } from '@/pages/TestAuthPage'
+import { router } from '@/routes/router'
 
-function App() {
-  return <TestAuthPage />
+export default function App() {
+  return <RouterProvider router={router} />
 }
-
-export default App
