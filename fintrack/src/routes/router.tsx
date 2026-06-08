@@ -14,7 +14,14 @@ import { TransactionsPage } from '@/pages/transactions/transactions-page'
 
 import { WalletsPage } from '@/pages/wallets/wallets-page'
 
+import { LoginPage } from '@/pages/auth/login-page'
+
 export const router = createBrowserRouter([
+  {
+  path: '/login',
+  element: <LoginPage />,
+  },
+
   {
     path: '/',
     element: <DashboardPage />,

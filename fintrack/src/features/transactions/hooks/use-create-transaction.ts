@@ -1,20 +1,18 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { createTransaction } from "../services/transaction.service"
+import { createTransaction } from '../services/transaction.service'
 
 export function useCreateTransaction() {
-  const queryClient = useQueryClient()
+const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: createTransaction,
+return useMutation({
+mutationFn: createTransaction,
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["transactions"],
-      })
-    },
+onSuccess: async () => {
+  await queryClient.invalidateQueries({
+    queryKey: ['transactions'],
   })
+},
+
+})
 }
