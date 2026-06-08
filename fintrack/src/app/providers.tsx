@@ -4,26 +4,27 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import type { ReactNode } from 'react'
 
-import { ThemeProvider } from '@/providers/theme-provider'
-
 import { queryClient } from '@/lib/react-query'
 
+import { AuthProvider } from '@/providers/auth-provider'
+import { ThemeProvider } from '@/providers/theme-provider'
+
 interface AppProvidersProps {
-  children: ReactNode
+children: ReactNode
 }
 
 export function AppProviders({
-  children,
+children,
 }: AppProvidersProps) {
-  return (
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        {children}
+return (<ThemeProvider> 
+          <QueryClientProvider client={queryClient}> 
+            <AuthProvider>
+              {children} 
+            </AuthProvider>
 
-        <ReactQueryDevtools
-          initialIsOpen={false}
-        />
-      </QueryClientProvider>
-    </ThemeProvider>
-  )
+            <ReactQueryDevtools
+              initialIsOpen={false}
+            />
+          </QueryClientProvider>
+        </ThemeProvider>)
 }
