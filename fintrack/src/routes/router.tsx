@@ -15,6 +15,7 @@ import { TransactionsPage } from '@/pages/transactions/transactions-page'
 import { WalletsPage } from '@/pages/wallets/wallets-page'
 
 import { LoginPage } from '@/pages/auth/login-page'
+import { ProtectedRoute } from '@/routes/protected-route'
 
 export const router = createBrowserRouter([
   {
@@ -24,31 +25,55 @@ export const router = createBrowserRouter([
 
   {
     path: '/',
-    element: <DashboardPage />,
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: '/transactions',
-    element: <TransactionsPage />,
+    element: (
+      <ProtectedRoute>
+        <TransactionsPage />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: '/wallets',
-    element: <WalletsPage />,
+    element: (
+      <ProtectedRoute>
+        <WalletsPage />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: '/goals',
-    element: <GoalsPage />,
+    element: (
+      <ProtectedRoute>
+        <GoalsPage />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: '/reports',
-    element: <ReportsPage />,
+    element: (
+      <ProtectedRoute>
+        <ReportsPage />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: '/settings',
-    element: <SettingsPage />,
+    element: (
+      <ProtectedRoute>
+        <SettingsPage />
+      </ProtectedRoute>
+    ),
   },
 ])

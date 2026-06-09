@@ -40,6 +40,7 @@ import {
 import {
   transactionSchema,
   type TransactionFormData,
+  type TransactionFormInput,
 } from "../schemas/transaction.schema"
 
 import { useCreateTransaction } from "../hooks/use-create-transaction"
@@ -49,7 +50,11 @@ export function TransactionFormDialog() {
     useCreateTransaction()
 
   const form =
-    useForm<TransactionFormData>({
+    useForm<
+      TransactionFormInput,
+      undefined,
+      TransactionFormData
+    >({
       resolver:
         zodResolver(transactionSchema),
 
@@ -58,9 +63,8 @@ export function TransactionFormDialog() {
         amount: 0,
         category: "",
         type: "expense",
-        date: new Date()
-          .toISOString()
-          .split("T")[0],
+        transaction_date: new Date()
+          .toLocaleDateString("en-CA"),
       },
     })
 
@@ -133,10 +137,8 @@ export function TransactionFormDialog() {
                       <Input
                         type="number"
                         placeholder="0,00"
-                        value={field.value}
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value))
-                        }
+                        value={String(field.value ?? "")}
+                        onChange={field.onChange}
                         className="h-10 rounded-2xl px-3 transition-colors"
                       />
                     </FormControl>
@@ -213,7 +215,7 @@ export function TransactionFormDialog() {
 
               <FormField
                 control={form.control}
-                name="date"
+                name="transaction_date"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm text-muted-foreground">

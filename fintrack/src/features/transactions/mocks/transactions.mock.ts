@@ -7,7 +7,9 @@ export const transactionsMock: Transaction[] = [
     amount: 4500,
     category: "Salário",
     type: "income",
-    date: "2026-06-01",
+    transaction_date: "2026-06-01",
+    user_id: "00000000-0000-0000-0000-000000000000",
+    created_at: "2026-06-01T00:00:00.000Z",
   },
   {
     id: "2",
@@ -15,6 +17,8 @@ export const transactionsMock: Transaction[] = [
     amount: 320,
     category: "Alimentação",
     type: "expense",
-    date: "2026-06-03",
+    transaction_date: "2026-06-03",
+    user_id: "00000000-0000-0000-0000-000000000000",
+    created_at: "2026-06-03T00:00:00.000Z",
   },
 ]

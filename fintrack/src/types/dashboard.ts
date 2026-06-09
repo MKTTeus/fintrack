@@ -5,11 +5,13 @@ export interface Metric {
   variant?: 'default' | 'income' | 'expense'
 }
 
-export interface Transaction {
+export interface DashboardTransaction {
+  id: string
   title: string
   category: string
-  value: string
-  expense: boolean
+  amount: number
+  type: 'income' | 'expense'
+  transaction_date: string
 }
 
 export interface ExpenseChartData {

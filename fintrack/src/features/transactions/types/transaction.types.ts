@@ -1,22 +1,15 @@
-export type TransactionType = 'income' | 'expense'
+import type { Database } from '@/types/database.types'
 
-export interface Transaction {
-id: string
-user_id: string
+export type Transaction =
+  Database['public']['Tables']['transactions']['Row']
 
-title: string
-amount: number
-type: TransactionType
-category: string
+export type TransactionType = Transaction['type']
 
-transaction_date: string
-created_at: string
-}
-
-export interface CreateTransactionInput {
-title: string
-amount: number
-type: TransactionType
-category: string
-transaction_date: string
-}
+export type CreateTransactionInput = Pick<
+  Database['public']['Tables']['transactions']['Insert'],
+  | 'title'
+  | 'amount'
+  | 'type'
+  | 'category'
+  | 'transaction_date'
+>

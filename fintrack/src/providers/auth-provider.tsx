@@ -1,25 +1,15 @@
 import {
-createContext,
-useContext,
 useEffect,
 useState,
 } from 'react'
 
-import type {
-Session,
-User,
-} from '@supabase/supabase-js'
-
 import { supabase } from '@/lib/supabase'
+import { AuthContext } from '@/providers/auth-context'
 
-interface AuthContextType {
-user: User | null
-session: Session | null
-loading: boolean
-}
-
-const AuthContext =
-createContext<AuthContextType | null>(null)
+import type {
+  Session,
+  User,
+} from '@supabase/supabase-js'
 
 interface AuthProviderProps {
 children: React.ReactNode
@@ -38,12 +28,25 @@ const [loading, setLoading] =
 useState(true)
 
 useEffect(() => {
+let mounted = true
+
 async function loadSession() {
-const response =
-await supabase.auth.getSession()
+const { data, error } =
+  await supabase.auth.getSession()
+
+if (!mounted) {
+  return
+}
+
+if (error) {
+  setSession(null)
+  setUser(null)
+  setLoading(false)
+  return
+}
 
   const session =
-    response.data.session
+    data.session
 
   setSession(session)
 
@@ -58,13 +61,20 @@ const {
   data: { subscription },
 } = supabase.auth.onAuthStateChange(
   (_event, session) => {
+    if (!mounted) {
+      return
+    }
+
     setSession(session)
 
     setUser(session?.user ?? null)
+
+    setLoading(false)
   }
 )
 
 return () => {
+  mounted = false
   subscription.unsubscribe()
 }
 
@@ -81,16 +91,4 @@ loading,
 {children}
 </AuthContext.Provider>
 )
-}
-
-export function useAuth() {
-const context = useContext(AuthContext)
-
-if (!context) {
-throw new Error(
-'useAuth must be used within AuthProvider'
-)
-}
-
-return context
 }

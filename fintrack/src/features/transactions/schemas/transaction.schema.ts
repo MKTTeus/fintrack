@@ -3,9 +3,11 @@ import { z } from "zod"
 export const transactionSchema = z.object({
   title: z
     .string()
+    .trim()
     .min(3, "O título deve ter pelo menos 3 caracteres"),
 
   amount: z
+    .coerce
     .number({
       error: "Informe um valor válido",
     })
@@ -17,8 +19,13 @@ export const transactionSchema = z.object({
 
   type: z.enum(["income", "expense"]),
 
-  date: z.string(),
+  transaction_date: z
+    .string()
+    .min(1, "Informe a data da transação"),
 })
 
+export type TransactionFormInput =
+  z.input<typeof transactionSchema>
+
 export type TransactionFormData =
-  z.infer<typeof transactionSchema>
+  z.output<typeof transactionSchema>

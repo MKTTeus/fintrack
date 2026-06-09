@@ -55,7 +55,13 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: "date",
+    accessorKey: "transaction_date",
     header: "Data",
+    cell: ({ row }) =>
+      new Intl.DateTimeFormat("pt-BR").format(
+        new Date(
+          `${row.original.transaction_date}T00:00:00`,
+        ),
+      ),
   },
 ]

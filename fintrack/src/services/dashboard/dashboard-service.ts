@@ -7,9 +7,9 @@ import {
 
 import type {
   BalanceChartData,
+  DashboardTransaction,
   ExpenseChartData,
   Metric,
-  Transaction,
 } from '@/types/dashboard'
 
 export async function getDashboardMetrics(): Promise<
@@ -23,7 +23,7 @@ export async function getDashboardMetrics(): Promise<
 }
 
 export async function getTransactions(): Promise<
-  Transaction[]
+  DashboardTransaction[]
 > {
   return new Promise((resolve) => {
     setTimeout(() => {

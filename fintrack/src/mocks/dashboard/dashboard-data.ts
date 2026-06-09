@@ -1,8 +1,8 @@
 import type {
   BalanceChartData,
+  DashboardTransaction,
   ExpenseChartData,
   Metric,
-  Transaction,
 } from '@/types/dashboard'
 
 export const metrics: Metric[] = [
@@ -27,26 +27,32 @@ export const metrics: Metric[] = [
   },
 ]
 
-export const transactions: Transaction[] = [
+export const transactions: DashboardTransaction[] = [
   {
+    id: 'dashboard-transaction-1',
     title: 'Supermercado',
     category: 'Alimentação',
-    value: '-R$ 240',
-    expense: true,
+    amount: 240,
+    type: 'expense',
+    transaction_date: '2026-06-03',
   },
 
   {
+    id: 'dashboard-transaction-2',
     title: 'Salário',
     category: 'Receita',
-    value: '+R$ 4.500',
-    expense: false,
+    amount: 4500,
+    type: 'income',
+    transaction_date: '2026-06-01',
   },
 
   {
+    id: 'dashboard-transaction-3',
     title: 'Uber',
     category: 'Transporte',
-    value: '-R$ 32',
-    expense: true,
+    amount: 32,
+    type: 'expense',
+    transaction_date: '2026-06-02',
   },
 ]
 

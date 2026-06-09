@@ -25,6 +25,7 @@ export function TransactionTable() {
     isLoading,
   } = useTransactions()
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns: transactionColumns,

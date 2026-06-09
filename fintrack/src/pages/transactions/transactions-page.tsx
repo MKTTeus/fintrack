@@ -8,13 +8,13 @@ import { Badge } from '@/components/ui/badge'
 export function TransactionsPage() {
   const { data = [] } = useTransactions()
 
-  const total = Array.isArray(data) ? data.length : 0
-  const incomeCount = Array.isArray(data)
-    ? data.filter((t: any) => t.type === 'income').length
-    : 0
-  const expenseCount = Array.isArray(data)
-    ? data.filter((t: any) => t.type === 'expense').length
-    : 0
+  const total = data.length
+  const incomeCount = data.filter(
+    (transaction) => transaction.type === 'income',
+  ).length
+  const expenseCount = data.filter(
+    (transaction) => transaction.type === 'expense',
+  ).length
 
   return (
     <AppLayout>

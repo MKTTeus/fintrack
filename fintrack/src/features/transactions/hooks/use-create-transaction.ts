@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { queryKeys } from '@/lib/query-keys'
+
 import { createTransaction } from '../services/transaction.service'
 
 export function useCreateTransaction() {
@@ -10,7 +12,7 @@ mutationFn: createTransaction,
 
 onSuccess: async () => {
   await queryClient.invalidateQueries({
-    queryKey: ['transactions'],
+    queryKey: queryKeys.transactions.list,
   })
 },
 

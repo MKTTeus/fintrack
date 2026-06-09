@@ -18,7 +18,7 @@ if (error) {
 throw error
 }
 
-return data as Transaction[]
+return data
 }
 
 export async function createTransaction(
@@ -38,7 +38,11 @@ error,
 } = await supabase
 .from('transactions')
 .insert({
-...input,
+title: input.title,
+amount: input.amount,
+type: input.type,
+category: input.category,
+transaction_date: input.transaction_date,
 user_id: user.id,
 })
 .select()
@@ -48,5 +52,5 @@ if (error) {
 throw error
 }
 
-return data as Transaction
+return data
 }
