@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import type {
 CreateTransactionInput,
 Transaction,
+UpdateTransactionInput,
 } from '../types/transaction.types'
 
 export async function getTransactions(): Promise<Transaction[]> {
@@ -53,4 +54,54 @@ throw error
 }
 
 return data
+}
+
+export async function updateTransaction(
+id: string,
+input: UpdateTransactionInput
+): Promise<Transaction> {
+const {
+data,
+error,
+} = await supabase
+.from('transactions')
+.update({
+...(input.title !== undefined && {
+  title: input.title,
+}),
+...(input.amount !== undefined && {
+  amount: input.amount,
+}),
+...(input.type !== undefined && {
+  type: input.type,
+}),
+...(input.category !== undefined && {
+  category: input.category,
+}),
+...(input.transaction_date !== undefined && {
+  transaction_date: input.transaction_date,
+}),
+})
+.eq('id', id)
+.select()
+.single()
+
+if (error) {
+throw error
+}
+
+return data
+}
+
+export async function deleteTransaction(
+id: string
+): Promise<void> {
+const { error } = await supabase
+.from('transactions')
+.delete()
+.eq('id', id)
+
+if (error) {
+throw error
+}
 }

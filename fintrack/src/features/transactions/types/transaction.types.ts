@@ -13,3 +13,11 @@ export type CreateTransactionInput = Pick<
   | 'category'
   | 'transaction_date'
 >
+
+export type UpdateTransactionInput = Partial<
+  Omit<CreateTransactionInput, never>
+>
+
+export type DeleteTransactionInput = {
+  id: string
+}

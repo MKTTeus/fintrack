@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 
 import { useExpensesChart } from '@/hooks/dashboard/use-expenses-chart'
+import { ChartsEmptyState } from '@/components/dashboard/charts-empty-state'
 
 import { ChartContainer } from './chart-container'
 
@@ -27,6 +28,27 @@ export function ExpensesChart() {
           bg-card
         "
       />
+    )
+  }
+
+  // Check if all data is empty (all zeros)
+  const hasData = data?.some(
+    (item) => item.income > 0 || item.expense > 0
+  )
+
+  if (!hasData) {
+    return (
+      <ChartContainer
+        title="Receitas vs Despesas"
+        description="Comparação financeira dos últimos meses"
+      >
+        <div className="h-[320px] w-full">
+          <ChartsEmptyState
+            title="Gráfico de Receitas e Despesas"
+            description="Seus dados aparecerão aqui conforme você criar transações"
+          />
+        </div>
+      </ChartContainer>
     )
   }
 

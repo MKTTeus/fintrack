@@ -5,7 +5,9 @@ import {
 } from 'lucide-react'
 
 import { useDashboardMetrics } from '@/hooks/dashboard/use-dashboard-metrics'
+import { useDashboardSummary } from '@/hooks/dashboard/use-dashboard-summary'
 
+import { DashboardEmptyState } from './dashboard-empty-state'
 import { MetricCard } from './metric-card'
 
 const icons = {
@@ -17,6 +19,12 @@ const icons = {
 export function FinancialOverview() {
   const { data, isLoading } =
     useDashboardMetrics()
+
+  // Check if user has any transactions
+  const { data: summary } = useDashboardSummary()
+
+  const hasTransactions =
+    summary && summary.transactionsCount > 0
 
   if (isLoading) {
     return (
@@ -42,6 +50,10 @@ export function FinancialOverview() {
         ))}
       </div>
     )
+  }
+
+  if (!hasTransactions) {
+    return <DashboardEmptyState />
   }
 
   return (

@@ -2,6 +2,8 @@ import type { ColumnDef } from "@tanstack/react-table"
 
 import { Badge } from "@/components/ui/badge"
 
+import { TransactionActions } from "./transaction-actions"
+
 import type { Transaction } from "../types/transaction.types"
 
 export const transactionColumns: ColumnDef<Transaction>[] = [
@@ -63,5 +65,12 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
           `${row.original.transaction_date}T00:00:00`,
         ),
       ),
+  },
+  {
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => (
+      <TransactionActions transaction={row.original} />
+    ),
   },
 ]

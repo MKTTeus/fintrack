@@ -6,6 +6,8 @@ import {
 
 import { useTransactions } from '@/hooks/dashboard/use-transactions'
 
+import { RecentTransactionsEmpty } from './recent-transactions-empty'
+
 const icons = {
   Supermercado: ShoppingCart,
   Salário: Wallet,
@@ -26,6 +28,53 @@ export function RecentTransactions() {
           bg-card
         "
       />
+    )
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <section
+        className="
+          rounded-3xl
+          border
+          border-border
+          bg-card
+          p-6
+        "
+      >
+        <div
+          className="
+            mb-6
+            flex
+            items-center
+            justify-between
+          "
+        >
+          <div>
+            <h2
+              className="
+                text-xl
+                font-medium
+                tracking-tight
+              "
+            >
+              Transações Recentes
+            </h2>
+
+            <p
+              className="
+                mt-1
+                text-sm
+                text-muted-foreground
+              "
+            >
+              Últimas movimentações da conta
+            </p>
+          </div>
+        </div>
+
+        <RecentTransactionsEmpty />
+      </section>
     )
   }
 

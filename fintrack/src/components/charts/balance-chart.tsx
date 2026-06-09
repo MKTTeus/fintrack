@@ -9,6 +9,7 @@ import {
 } from 'recharts'
 
 import { useBalanceChart } from '@/hooks/dashboard/use-balance-chart'
+import { ChartsEmptyState } from '@/components/dashboard/charts-empty-state'
 
 import { ChartContainer } from './chart-container'
 
@@ -26,6 +27,25 @@ export function BalanceChart() {
           bg-card
         "
       />
+    )
+  }
+
+  // Check if all data is empty (all zeros)
+  const hasData = data?.some((item) => item.balance > 0)
+
+  if (!hasData) {
+    return (
+      <ChartContainer
+        title="Evolução do Saldo"
+        description="Crescimento financeiro ao longo do tempo"
+      >
+        <div className="h-[320px] w-full">
+          <ChartsEmptyState
+            title="Gráfico de Evolução do Saldo"
+            description="Conforme você criar transações, poderá acompanhar sua evolução financeira"
+          />
+        </div>
+      </ChartContainer>
     )
   }
 

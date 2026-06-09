@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { queryKeys } from '@/lib/query-keys'
-import { getTransactions } from '@/services/dashboard/dashboard-service'
+import { getTransactions } from '@/features/transactions/services/transaction.service'
 
 import type { DashboardTransaction } from '@/types/dashboard'
 

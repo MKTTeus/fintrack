@@ -24,3 +24,11 @@ export interface BalanceChartData {
   month: string
   balance: number
 }
+
+export interface DashboardSummary {
+balance: number
+income: number
+expenses: number
+transactionsCount: number
+}
+
