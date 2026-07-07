@@ -21,12 +21,15 @@ export function FinancialOverview() {
     useDashboardMetrics()
 
   // Check if user has any transactions
-  const { data: summary } = useDashboardSummary()
+  const {
+    data: summary,
+    isLoading: isSummaryLoading,
+  } = useDashboardSummary()
 
   const hasTransactions =
     summary && summary.transactionsCount > 0
 
-  if (isLoading) {
+  if (isLoading || isSummaryLoading) {
     return (
       <div
         className="

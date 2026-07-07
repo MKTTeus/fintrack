@@ -44,6 +44,7 @@ amount: input.amount,
 type: input.type,
 category: input.category,
 transaction_date: input.transaction_date,
+wallet_id: input.wallet_id,
 user_id: user.id,
 })
 .select()
@@ -80,6 +81,9 @@ error,
 }),
 ...(input.transaction_date !== undefined && {
   transaction_date: input.transaction_date,
+}),
+...(input.wallet_id !== undefined && {
+  wallet_id: input.wallet_id,
 }),
 })
 .eq('id', id)

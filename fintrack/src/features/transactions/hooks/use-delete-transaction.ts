@@ -15,9 +15,17 @@ export function useDeleteTransaction() {
         queryKey: queryKeys.transactions.list,
       })
 
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.wallets.list,
+      })
+
       // Invalidate dashboard queries
       await queryClient.invalidateQueries({
         queryKey: queryKeys.dashboard.summary,
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.dashboard.metrics,
       })
 
       await queryClient.invalidateQueries({

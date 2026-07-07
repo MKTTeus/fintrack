@@ -36,6 +36,7 @@ import {
 import {
   transactionCategories,
 } from "../constants/transaction-categories"
+import { useWallets } from "@/features/wallets/hooks/use-wallets"
 
 import {
   transactionSchema,
@@ -44,10 +45,14 @@ import {
 } from "../schemas/transaction.schema"
 
 import { useCreateTransaction } from "../hooks/use-create-transaction"
+import { TransactionWalletField } from "./transaction-wallet-field"
 
 export function TransactionFormDialog() {
   const { mutateAsync } =
     useCreateTransaction()
+  const { wallets, walletsQuery } = useWallets()
+  const isWalletUnavailable =
+    walletsQuery.isLoading || wallets.length === 0
 
   const form =
     useForm<
@@ -63,6 +68,7 @@ export function TransactionFormDialog() {
         amount: 0,
         category: "",
         type: "expense",
+        wallet_id: "",
         transaction_date: new Date()
           .toLocaleDateString("en-CA"),
       },
@@ -179,6 +185,12 @@ export function TransactionFormDialog() {
               />
             </div>
 
+            <TransactionWalletField
+              control={form.control}
+              isLoading={walletsQuery.isLoading}
+              wallets={wallets}
+            />
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
@@ -247,7 +259,10 @@ export function TransactionFormDialog() {
               <Button
                 type="submit"
                 className="h-10 rounded-2xl px-4 font-semibold transition-colors duration-150"
-                disabled={form.formState.isSubmitting}
+                disabled={
+                  form.formState.isSubmitting ||
+                  isWalletUnavailable
+                }
               >
                 {form.formState.isSubmitting ? "Salvando..." : "Salvar transação"}
               </Button>

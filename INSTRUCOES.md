@@ -2018,6 +2018,32 @@ export const Chart = memo(({ data }: Props) => {
   - [ ] Atualizar roadmap
 ```
 
+## Design System
+
+Todo novo componente deve seguir obrigatoriamente:
+
+- Não alterar a identidade visual existente.
+- Utilizar Tailwind e shadcn/ui.
+- Reutilizar componentes sempre que possível.
+- Priorizar layouts limpos e minimalistas.
+- Utilizar grids consistentes.
+- Manter espaçamentos uniformes.
+- Criar empty states, loading states e error states.
+- Microinterações discretas.
+- Responsividade obrigatória.
+- Não criar novos estilos sem necessidade.
+
+## AI Development
+
+Este projeto utiliza AI Skills instaladas em `.agents/skills`.
+
+Ao desenvolver novas funcionalidades:
+
+- Leia primeiro o `INSTRUCOES.md`.
+- Respeite o design system existente.
+- Utilize as AI Skills apenas para melhorar UX, hierarquia visual, responsividade e qualidade da interface.
+- Não altere a identidade visual nem os componentes-base sem necessidade.
+
 #### Seções a Atualizar:
 
 1. **ETAPA X**: Adicionar nova seção cronológica

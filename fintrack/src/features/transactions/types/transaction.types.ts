@@ -12,6 +12,7 @@ export type CreateTransactionInput = Pick<
   | 'type'
   | 'category'
   | 'transaction_date'
+  | 'wallet_id'
 >
 
 export type UpdateTransactionInput = Partial<

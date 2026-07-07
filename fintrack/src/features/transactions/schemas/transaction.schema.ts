@@ -19,6 +19,10 @@ export const transactionSchema = z.object({
 
   type: z.enum(["income", "expense"]),
 
+  wallet_id: z
+    .string()
+    .min(1, "Selecione uma carteira"),
+
   transaction_date: z
     .string()
     .min(1, "Informe a data da transação"),

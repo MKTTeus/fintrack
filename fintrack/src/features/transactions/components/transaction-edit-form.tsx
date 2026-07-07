@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useWallets } from '@/features/wallets/hooks/use-wallets'
 
 import { transactionCategories } from '../constants/transaction-categories'
 import {
@@ -26,6 +27,7 @@ import {
   type TransactionFormInput,
 } from '../schemas/transaction.schema'
 import { useUpdateTransaction } from '../hooks/use-update-transaction'
+import { TransactionWalletField } from './transaction-wallet-field'
 
 import type { Transaction } from '../types/transaction.types'
 
@@ -40,6 +42,9 @@ export function TransactionEditForm({
 }: TransactionEditFormProps) {
   const { mutateAsync } =
     useUpdateTransaction()
+  const { wallets, walletsQuery } = useWallets()
+  const isWalletUnavailable =
+    walletsQuery.isLoading || wallets.length === 0
 
   const form = useForm<
     TransactionFormInput,
@@ -53,6 +58,7 @@ export function TransactionEditForm({
       amount: transaction.amount,
       category: transaction.category,
       type: transaction.type,
+      wallet_id: transaction.wallet_id ?? '',
       transaction_date: transaction.transaction_date,
     },
   })
@@ -159,6 +165,12 @@ export function TransactionEditForm({
           />
         </div>
 
+        <TransactionWalletField
+          control={form.control}
+          isLoading={walletsQuery.isLoading}
+          wallets={wallets}
+        />
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -233,7 +245,10 @@ export function TransactionEditForm({
 
           <Button
             type="submit"
-            disabled={form.formState.isSubmitting}
+            disabled={
+              form.formState.isSubmitting ||
+              isWalletUnavailable
+            }
             className="rounded-2xl"
           >
             {form.formState.isSubmitting
