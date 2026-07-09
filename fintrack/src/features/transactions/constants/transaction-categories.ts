@@ -6,5 +6,12 @@ export const transactionCategories = [
   "Transporte",
   "Saúde",
   "Lazer",
+  "Compras",
+  "Moradia",
+  "Contas e Serviços",
   "Educação",
+  "Viagens",
+  "Presentes",
+  "Doações",
+  "Outros",
 ] as const
