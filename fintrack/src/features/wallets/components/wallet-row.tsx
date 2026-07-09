@@ -1,4 +1,5 @@
 import type { WalletItem } from '../types/wallet.types'
+import { walletTableGridClassName } from '../constants/wallet-table-layout'
 import { dynamicToneStyles } from '../utils/wallet-styles'
 
 import { WalletActionsMenu } from './wallet-actions-menu'
@@ -16,7 +17,7 @@ export function WalletRow({
 }: WalletRowProps) {
   return (
     <div
-      className="
+      className={`
         grid
         grid-cols-1
         gap-4
@@ -25,9 +26,9 @@ export function WalletRow({
         p-5
         transition-colors
         hover:bg-muted/20
-        lg:grid-cols-[1.7fr_0.75fr_1fr_1.15fr_auto]
         lg:items-center
-      "
+        ${walletTableGridClassName}
+      `}
     >
       <div className="flex min-w-0 items-center gap-4">
         <WalletIcon wallet={wallet} />

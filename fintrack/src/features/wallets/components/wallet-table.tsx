@@ -1,4 +1,5 @@
 import type { WalletItem } from '../types/wallet.types'
+import { walletTableGridClassName } from '../constants/wallet-table-layout'
 
 import { WalletEmptyState } from './wallet-empty-state'
 import { WalletErrorState } from './wallet-error-state'
@@ -33,16 +34,16 @@ export function WalletTable({
   return (
     <section className="overflow-hidden rounded-3xl border border-border bg-card">
       <div
-        className="
+        className={`
           hidden
-          grid-cols-[1.7fr_0.75fr_1fr_1.15fr_auto]
           gap-4
           px-5
           py-4
           text-sm
           text-muted-foreground
           lg:grid
-        "
+          ${walletTableGridClassName}
+        `}
       >
         <span>Carteira</span>
         <span>Transações</span>

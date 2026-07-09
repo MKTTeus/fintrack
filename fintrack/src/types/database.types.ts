@@ -165,10 +165,125 @@ export interface Database {
           },
         ]
       }
+      goals: {
+        Row: {
+          id: string
+          user_id: string
+          wallet_id: string | null
+          title: string
+          description: string | null
+          target_amount: number
+          target_date: string | null
+          monthly_target: number | null
+          icon: string | null
+          color: string | null
+          status: 'active' | 'completed' | 'paused' | 'cancelled'
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          wallet_id?: string | null
+          title: string
+          description?: string | null
+          target_amount: number
+          target_date?: string | null
+          monthly_target?: number | null
+          icon?: string | null
+          color?: string | null
+          status?: 'active' | 'completed' | 'paused' | 'cancelled'
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          wallet_id?: string | null
+          title?: string
+          description?: string | null
+          target_amount?: number
+          target_date?: string | null
+          monthly_target?: number | null
+          icon?: string | null
+          color?: string | null
+          status?: 'active' | 'completed' | 'paused' | 'cancelled'
+          created_at?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'goals_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'goals_wallet_id_fkey'
+            columns: ['wallet_id']
+            referencedRelation: 'wallets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      goal_deposits: {
+        Row: {
+          id: string
+          user_id: string
+          goal_id: string
+          wallet_id: string | null
+          amount: number
+          deposit_date: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          goal_id: string
+          wallet_id?: string | null
+          amount: number
+          deposit_date: string
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          goal_id?: string
+          wallet_id?: string | null
+          amount?: number
+          deposit_date?: string
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'goal_deposits_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'goal_deposits_goal_id_fkey'
+            columns: ['goal_id']
+            referencedRelation: 'goals'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'goal_deposits_wallet_id_fkey'
+            columns: ['wallet_id']
+            referencedRelation: 'wallets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
-    Enums: Record<string, never>
+    Enums: {
+      goal_status: 'active' | 'completed' | 'paused' | 'cancelled'
+    }
     CompositeTypes: Record<string, never>
   }
 }

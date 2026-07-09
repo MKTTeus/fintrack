@@ -14,6 +14,18 @@ export const queryKeys = {
     details: (id: string) =>
       ['credit-cards', 'details', id] as const,
   },
+  goals: {
+    list: ['goals', 'list'] as const,
+    details: (id: string) =>
+      ['goals', 'details', id] as const,
+  },
+  goalDeposits: {
+    list: ['goal-deposits', 'list'] as const,
+    byGoal: (goalId: string) =>
+      ['goal-deposits', 'list', goalId] as const,
+    details: (id: string) =>
+      ['goal-deposits', 'details', id] as const,
+  },
   dashboard: {
     summary: ['dashboard', 'summary'] as const,
     metrics: ['dashboard', 'metrics'] as const,

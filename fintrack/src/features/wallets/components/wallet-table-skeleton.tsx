@@ -1,17 +1,19 @@
+import { walletTableGridClassName } from '../constants/wallet-table-layout'
+
 export function WalletTableSkeleton() {
   return (
     <section className="overflow-hidden rounded-3xl border border-border bg-card">
       <div
-        className="
+        className={`
           hidden
-          grid-cols-[1.7fr_0.75fr_1fr_1.15fr_auto]
           gap-4
           px-5
           py-4
           text-sm
           text-muted-foreground
           lg:grid
-        "
+          ${walletTableGridClassName}
+        `}
       >
         <span>Carteira</span>
         <span>Transações</span>
@@ -23,16 +25,16 @@ export function WalletTableSkeleton() {
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="
+          className={`
             grid
             grid-cols-1
             gap-4
             border-t
             border-border
             p-5
-            lg:grid-cols-[1.7fr_0.75fr_1fr_1.15fr_auto]
             lg:items-center
-          "
+            ${walletTableGridClassName}
+          `}
         >
           <div className="flex items-center gap-4">
             <div className="size-11 animate-pulse rounded-2xl bg-muted/30" />
