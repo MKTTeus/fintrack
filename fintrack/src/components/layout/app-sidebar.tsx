@@ -1,54 +1,17 @@
-import {
-  ArrowLeftRight,
-  BarChart3,
-  LayoutDashboard,
-  Settings,
-  Target,
-  Wallet,
-} from 'lucide-react'
-
-import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { NavLink } from 'react-router-dom'
-
-const navItems = [
-  {
-    icon: LayoutDashboard,
-    label: 'Dashboard',
-    href: '/',
-  },
-
-  {
-    icon: ArrowLeftRight,
-    label: 'Transações',
-    href: '/transactions',
-  },
-
-  {
-    icon: Wallet,
-    label: 'Carteiras',
-    href: '/wallets',
-  },
-
-  {
-    icon: Target,
-    label: 'Metas',
-    href: '/goals',
-  },
-
-  {
-    icon: BarChart3,
-    label: 'Relatórios',
-    href: '/reports',
-  },
-
-  {
-    icon: Settings,
-    label: 'Configurações',
-    href: '/settings',
-  },
-]
+import { useUserSettings } from '@/features/settings/hooks/use-user-settings'
+import { useAuth } from '@/providers/auth-context'
+import { navItems } from './nav-items'
 
 export function AppSidebar() {
+  const { data: settings } = useUserSettings()
+  const { user } = useAuth()
+
+  const displayName =
+    settings?.display_name ??
+    user?.email?.split('@')[0] ??
+    'Usuário'
+
   return (
     <aside
       className="
@@ -135,9 +98,6 @@ export function AppSidebar() {
       <div
         className="
           mt-auto
-          flex
-          items-center
-          justify-between
           border-t
           border-border
           pt-4
@@ -145,20 +105,19 @@ export function AppSidebar() {
       >
         <div>
           <p className="text-sm font-medium">
-            Matheus
+            {displayName}
           </p>
-
+ 
           <p
             className="
+              mt-1
               text-xs
               text-muted-foreground
             "
           >
-            Fintrack User
+            {user?.email ?? 'Fintrack User'}
           </p>
         </div>
-
-        <ThemeToggle />
       </div>
     </aside>
   )

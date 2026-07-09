@@ -1,52 +1,88 @@
-import { Bell } from 'lucide-react'
-
+import { User, type LucideIcon } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 
-const pageData = {
+import { navItems } from './nav-items'
+import { useUserSettings } from '@/features/settings/hooks/use-user-settings'
+import { useAuth } from '@/providers/auth-context'
+
+type PageData = {
+  icon?: LucideIcon
+  title?: string
+  description: string
+}
+
+const pageData: Record<string, PageData> = {
   '/': {
-    title: 'Boa noite, Matheus',
-    description:
-      'Acompanhe suas finanças em tempo real',
+    description: 'Acompanhe suas finanças em tempo real',
   },
 
   '/transactions': {
+    icon: navItems.find((item) => item.href === '/transactions')?.icon,
     title: 'Transações',
-    description:
-      'Gerencie suas movimentações financeiras',
+    description: 'Gerencie suas movimentações financeiras',
   },
 
   '/wallets': {
+    icon: navItems.find((item) => item.href === '/wallets')?.icon,
     title: 'Carteiras',
-    description:
-      'Visualize suas contas e saldos',
+    description: 'Visualize suas contas e saldos',
   },
 
   '/goals': {
+    icon: navItems.find((item) => item.href === '/goals')?.icon,
     title: 'Metas',
-    description:
-      'Acompanhe seus objetivos financeiros',
+    description: 'Acompanhe seus objetivos financeiros',
   },
 
   '/reports': {
+    icon: navItems.find((item) => item.href === '/reports')?.icon,
     title: 'Relatórios',
-    description:
-      'Analise seu desempenho financeiro',
+    description: 'Analise seu desempenho financeiro',
   },
 
   '/settings': {
+    icon: navItems.find((item) => item.href === '/settings')?.icon,
     title: 'Configurações',
-    description:
-      'Personalize sua experiência',
+    description: 'Personalize sua experiência',
   },
+}
+
+function getGreetingByHour(date: Date) {
+  const hour = date.getHours()
+
+  if (hour >= 5 && hour < 12) {
+    return 'Bom dia'
+  }
+
+  if (hour >= 12 && hour < 18) {
+    return 'Boa tarde'
+  }
+
+  return 'Boa noite'
 }
 
 export function AppHeader() {
   const location = useLocation()
+  const { data: settings } = useUserSettings()
+  const { user } = useAuth()
+
+  const pathname =
+    location.pathname === '/' ? '/' : location.pathname.replace(/\/$/, '')
 
   const currentPage =
-    pageData[
-      location.pathname as keyof typeof pageData
-    ] ?? pageData['/']
+    pageData[pathname as keyof typeof pageData] ?? pageData['/']
+
+  const displayName =
+    settings?.display_name ??
+    user?.email?.split('@')[0] ??
+    'Usuário'
+
+  const title =
+    pathname === '/'
+      ? `${getGreetingByHour(new Date())}, ${displayName}`
+      : currentPage.title ?? ''
+
+  const Icon = currentPage.icon
 
   return (
     <header
@@ -74,7 +110,14 @@ export function AppHeader() {
             tracking-tight
           "
         >
-          {currentPage.title}
+          {Icon ? (
+            <span className="inline-flex items-center gap-2">
+              <Icon className="size-5" />
+              {title}
+            </span>
+          ) : (
+            title
+          )}
         </h2>
 
         <p
@@ -89,53 +132,20 @@ export function AppHeader() {
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-3">
-        <button
-          className="
-            relative
-            flex
-            size-11
-            items-center
-            justify-center
-            rounded-2xl
-            border
-            border-border
-            bg-card
-            transition-all
-            hover:bg-accent
-          "
-        >
-          <Bell className="size-5" />
-
-          <span
-            className="
-              absolute
-              right-2
-              top-2
-              size-2
-              rounded-full
-              bg-primary
-            "
-          />
-        </button>
-
-        <div
-          className="
-            flex
-            size-11
-            items-center
-            justify-center
-            rounded-full
-            bg-primary
-            text-sm
-            font-medium
-            text-primary-foreground
-            shadow-lg
-            shadow-primary/20
-          "
-        >
-          M
-        </div>
+      <div
+        className="
+          flex
+          size-11
+          items-center
+          justify-center
+          rounded-full
+          bg-primary
+          text-primary-foreground
+          shadow-lg
+          shadow-primary/20
+        "
+      >
+        <User className="size-5" />
       </div>
     </header>
   )
