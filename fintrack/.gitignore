@@ -53,3 +53,11 @@ Thumbs.db
 
 # cache
 .cache
+
+# misc
+.agents/
+.cursor/
+node_modules/
+INSTRUCOES.md
+skills-lock.json
+package-lock.json
