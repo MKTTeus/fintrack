@@ -1,5 +1,5 @@
-import { User, type LucideIcon } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import { Settings, User, type LucideIcon } from 'lucide-react'
+import { NavLink, useLocation } from 'react-router-dom'
 
 import { navItems } from './nav-items'
 import { useUserSettings } from '@/features/settings/hooks/use-user-settings'
@@ -91,14 +91,18 @@ export function AppHeader() {
         top-0
         z-30
         flex
-        h-[80px]
+        h-[72px]
         items-center
         justify-between
         border-b
         border-border
-        bg-background/80
-        px-8
+        bg-background/90
+        px-4
         backdrop-blur-xl
+        transition-all
+        duration-200
+        sm:h-[80px]
+        sm:px-8
       "
     >
       {/* Left */}
@@ -132,20 +136,45 @@ export function AppHeader() {
       </div>
 
       {/* Right */}
-      <div
-        className="
-          flex
-          size-11
-          items-center
-          justify-center
-          rounded-full
-          bg-primary
-          text-primary-foreground
-          shadow-lg
-          shadow-primary/20
-        "
-      >
-        <User className="size-5" />
+      <div className="flex items-center gap-3">
+        <NavLink
+          to="/settings"
+          className="
+            inline-flex
+            h-11
+            w-11
+            items-center
+            justify-center
+            rounded-full
+            border
+            border-border
+            bg-card
+            text-muted-foreground
+            transition-colors
+            duration-150
+            hover:text-foreground
+            lg:hidden
+          "
+          aria-label="Configurações"
+        >
+          <Settings className="size-5" />
+        </NavLink>
+
+        <div
+          className="
+            flex
+            size-11
+            items-center
+            justify-center
+            rounded-full
+            bg-primary
+            text-primary-foreground
+            shadow-lg
+            shadow-primary/20
+          "
+        >
+          <User className="size-5" />
+        </div>
       </div>
     </header>
   )

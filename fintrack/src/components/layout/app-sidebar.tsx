@@ -15,6 +15,8 @@ export function AppSidebar() {
   return (
     <aside
       className="
+        hidden
+        lg:flex
         sticky
         top-0
         flex

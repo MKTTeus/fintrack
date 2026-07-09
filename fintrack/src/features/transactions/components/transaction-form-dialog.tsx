@@ -7,6 +7,7 @@ import { Plus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -91,7 +92,7 @@ export function TransactionFormDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg rounded-3xl border border-border bg-card p-6">
+      <DialogContent className="sm:max-w-lg rounded-3xl border border-border bg-card p-6 max-h-[calc(100dvh-2rem)] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium tracking-tight">
             Nova transação
@@ -104,6 +105,7 @@ export function TransactionFormDialog() {
 
         <Form {...form}>
           <form
+            id="transaction-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid gap-4"
           >
@@ -249,7 +251,7 @@ export function TransactionFormDialog() {
               />
             </div>
 
-            <div className="mt-2 flex w-full items-center justify-end gap-3">
+            <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" type="button" className="h-9 rounded-2xl px-3 transition-colors hover:bg-muted/6">
                   Cancelar
@@ -258,6 +260,7 @@ export function TransactionFormDialog() {
 
               <Button
                 type="submit"
+                form="transaction-form"
                 className="h-10 rounded-2xl px-4 font-semibold transition-colors duration-150"
                 disabled={
                   form.formState.isSubmitting ||
@@ -266,7 +269,7 @@ export function TransactionFormDialog() {
               >
                 {form.formState.isSubmitting ? "Salvando..." : "Salvar transação"}
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
