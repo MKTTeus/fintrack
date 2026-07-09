@@ -78,7 +78,7 @@ export function LoginPage() {
 
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="flex gap-3 rounded-3xl border border-white/10 bg-slate-900/70 p-3.5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.85)] ring-1 ring-white/5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-300 ring-1 ring-blue-500/20">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl text-blue-300">
                   <TrendingUp className="size-5" />
                 </div>
                 <div>
@@ -88,7 +88,7 @@ export function LoginPage() {
               </div>
 
               <div className="flex gap-3 rounded-3xl border border-white/10 bg-slate-900/70 p-3.5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.85)] ring-1 ring-white/5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-300 ring-1 ring-blue-500/20">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl text-blue-300">
                   <Info className="size-5" />
                 </div>
                 <div>
@@ -98,7 +98,7 @@ export function LoginPage() {
               </div>
 
               <div className="flex gap-3 rounded-3xl border border-white/10 bg-slate-900/70 p-3.5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.85)] ring-1 ring-white/5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-300 ring-1 ring-blue-500/20">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl text-blue-300">
                   <Shield className="size-5" />
                 </div>
                 <div>
@@ -130,7 +130,7 @@ export function LoginPage() {
                   <div className="grid gap-2">
                     <Label htmlFor="login-email">Email</Label>
                     <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/85 px-3 py-2.5 focus-within:border-blue-400/60 focus-within:ring-1 focus-within:ring-blue-400/20">
-                      <Mail className="size-5 text-slate-400" />
+                      <Mail className="size-5" />
                       <Input
                         id="login-email"
                         name="email"
@@ -139,7 +139,7 @@ export function LoginPage() {
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         placeholder="Digite seu email"
-                        className="border-0 bg-transparent p-0 text-slate-100 placeholder:text-slate-500 focus-visible:outline-none"
+                        className="border-0 bg-transparent text-slate-100 placeholder:text-slate-500 focus-visible:outline-none"
                       />
                     </div>
                   </div>
@@ -147,7 +147,7 @@ export function LoginPage() {
                   <div className="grid gap-2">
                     <Label htmlFor="login-password">Senha</Label>
                     <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/85 px-3 py-2.5 focus-within:border-blue-400/60 focus-within:ring-1 focus-within:ring-blue-400/20">
-                      <Lock className="size-5 text-slate-400" />
+                      <Lock className="size-5" />
                       <Input
                         id="login-password"
                         name="password"
@@ -156,7 +156,7 @@ export function LoginPage() {
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                         placeholder="Digite sua senha"
-                        className="border-0 bg-transparent p-0 text-slate-100 placeholder:text-slate-500 focus-visible:outline-none"
+                        className="border-0 bg-transparent text-slate-100 placeholder:text-slate-500 focus-visible:outline-none"
                       />
                     </div>
                   </div>
@@ -178,9 +178,10 @@ export function LoginPage() {
 
                 <div className="rounded-3xl border border-blue-500/20 bg-slate-950/85 p-4 ring-1 ring-blue-500/10">
                   <div className="flex items-center gap-2 text-sm font-medium text-blue-300">
-                    <Info className="size-4" />
-                    <span>Se quiser fazer um teste entre com esse email e senha</span>
+                    
+                    <span>Quer conhecer o FinTrack?</span>
                   </div>
+                  <span className="text-slate-300">Utilize a conta de demonstração abaixo:</span>
 
                   <div className="mt-4 space-y-3 rounded-2xl border border-slate-800/80 bg-slate-950/70 p-4">
                     <div className="flex items-center justify-between gap-4 text-sm text-slate-300">
