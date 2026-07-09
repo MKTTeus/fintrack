@@ -278,6 +278,49 @@ export interface Database {
           },
         ]
       }
+      user_settings: {
+        Row: {
+          id: string
+          user_id: string
+          display_name: string
+          currency: 'BRL' | 'USD' | 'EUR'
+          show_cents: boolean
+          date_format: 'dd/MM/yyyy' | 'MM/dd/yyyy'
+          theme: 'light' | 'dark' | 'system'
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          display_name: string
+          currency?: 'BRL' | 'USD' | 'EUR'
+          show_cents?: boolean
+          date_format?: 'dd/MM/yyyy' | 'MM/dd/yyyy'
+          theme?: 'light' | 'dark' | 'system'
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          display_name?: string
+          currency?: 'BRL' | 'USD' | 'EUR'
+          show_cents?: boolean
+          date_format?: 'dd/MM/yyyy' | 'MM/dd/yyyy'
+          theme?: 'light' | 'dark' | 'system'
+          created_at?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'user_settings_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>

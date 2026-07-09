@@ -19,6 +19,19 @@ export const queryKeys = {
     details: (id: string) =>
       ['goals', 'details', id] as const,
   },
+  reports: {
+    data: (filters: {
+      category: string
+      customEndDate?: string
+      customStartDate?: string
+      period: string
+      type: string
+      walletId: string
+    }) => ['reports', 'data', filters] as const,
+  },
+  userSettings: {
+    details: ['user-settings', 'details'] as const,
+  },
   goalDeposits: {
     list: ['goal-deposits', 'list'] as const,
     byGoal: (goalId: string) =>

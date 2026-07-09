@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import { AppHeader } from './app-header'
 import { AppSidebar } from './app-sidebar'
+import { UserSettingsThemeSync } from '@/features/settings/components/user-settings-theme-sync'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -18,6 +19,7 @@ export function AppLayout({
         text-foreground
       "
     >
+      <UserSettingsThemeSync />
       <div className="flex">
         <AppSidebar />
 
