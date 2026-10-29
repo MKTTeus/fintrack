@@ -1,10 +1,5 @@
+import { checkCategory, cleanCategoryName } from '../../server/categories.js'
 import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont.js'
-
-const categories = [
-  'Salário', 'Freelance', 'Investimentos', 'Alimentação', 'Transporte',
-  'Saúde', 'Lazer', 'Compras', 'Moradia', 'Contas e Serviços',
-  'Educação', 'Viagens', 'Presentes', 'Doações', 'Outros',
-] as const
 
 type Period = 'this_month' | 'last_month' | 'this_year' | 'last_30_days' | 'custom'
 
@@ -75,9 +70,7 @@ export default {
       const url = new URL(request.url)
       const { period, from, to } = periodDates(url)
       const category = url.searchParams.get('category')
-      if (category !== null && !categories.some((item) => item === category)) {
-        throw new ApiError(422, 'invalid_category', 'Categoria não reconhecida no FinTrack')
-      }
+      if (category !== null) await checkCategory(supabase, userId, category)
 
       const totals = new Map<string, { cents: number; count: number }>()
       let sumCents = 0
