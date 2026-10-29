@@ -75,7 +75,7 @@ export function WalletEditDialog({
       agency: metadata.agency ?? '',
       account: metadata.account ?? '',
       observations: metadata.observations ?? '',
-      current_balance: undefined,
+      current_balance: wallet?.type === 'credit_card' ? undefined : (wallet?.openingBalance ?? 0),
       card_name:
         wallet?.creditCard?.card_name ??
         wallet?.name ??
@@ -109,7 +109,7 @@ export function WalletEditDialog({
             pixKey: data.pix_key,
             pixKeyType: data.pix_key_type,
           }),
-          ...(wallet.type === 'cash' &&
+          ...(wallet.type !== 'credit_card' &&
             data.current_balance !== undefined && {
               current_balance: data.current_balance,
             }),
@@ -277,6 +277,7 @@ function WalletEditFields({
   if (type === 'pix') {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
+        <NumberField form={form} name="current_balance" label="Saldo inicial" placeholder="Ex: 100" />
         <TextField
           form={form}
           name="name"
@@ -309,6 +310,7 @@ function WalletEditFields({
   if (type === 'debit_card') {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
+        <NumberField form={form} name="current_balance" label="Saldo inicial" placeholder="Ex: 100" />
         <TextField
           form={form}
           name="name"
