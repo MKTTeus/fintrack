@@ -2,6 +2,9 @@ import { supabase } from '@/lib/supabase'
 
 import { formatCurrency } from '@/utils/transaction-formatters'
 import { getTotalAvailableBalance } from '@/features/wallets/utils/wallet-ledger'
+import { getTransactions } from '@/features/transactions/services/transaction.service'
+import { listWalletTransfers } from '@/features/wallets/services/wallet-transfer.service'
+import { listCreditCardPayments } from '@/features/wallets/services/credit-card-payment.service'
 
 import {
   calculateCumulativeBalance,
@@ -23,48 +26,30 @@ import type { Transaction } from './dashboard-aggregation'
  * Busca todas as transações do usuário autenticado
  * Sem limite, para cálculos de gráficos históricos
  */
-async function getAllUserTransactions(): Promise<
-  Transaction[]
-> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error('Usuário não autenticado')
-  }
-
-  const { data, error } = await supabase
-    .from('transactions')
-    .select('amount, type, transaction_date')
-    .eq('user_id', user.id)
-    .order('transaction_date', { ascending: true })
-
-  if (error) {
-    throw error
-  }
-
-  return data || []
+async function getAllUserTransactions(): Promise<Transaction[]> {
+  const records = await getTransactions()
+  return records.map(row => ({
+    amount: Number(row.amount),
+    type: row.type,
+    transaction_date: row.transaction_date,
+  }))
 }
 
 async function getCashLedger() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Usuário não autenticado')
-  const [walletsResult, transactionsResult, transfersResult, paymentsResult] = await Promise.all([
+  const [walletsResult, transactions, transfers, payments] = await Promise.all([
     supabase.from('wallets').select('*').eq('user_id', user.id).eq('is_active', true),
-    supabase.from('transactions').select('*').eq('user_id', user.id),
-    supabase.from('wallet_transfers').select('*').eq('user_id', user.id),
-    supabase.from('credit_card_payments').select('*').eq('user_id', user.id),
+    getTransactions(),
+    listWalletTransfers(),
+    listCreditCardPayments(),
   ])
   if (walletsResult.error) throw walletsResult.error
-  if (transactionsResult.error) throw transactionsResult.error
-  if (transfersResult.error) throw transfersResult.error
-  if (paymentsResult.error) throw paymentsResult.error
   return {
     wallets: walletsResult.data ?? [],
-    transactions: transactionsResult.data ?? [],
-    transfers: transfersResult.data ?? [],
-    payments: paymentsResult.data ?? [],
+    transactions,
+    transfers,
+    payments,
   }
 }
 
