@@ -351,7 +351,23 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      mont_preview_transaction_reset: {
+        Args: { p_user_id: string }
+        Returns: {
+          count: number
+          income_count: number
+          expense_count: number
+          income_total: number
+          expense_total: number
+          snapshot_hash: string
+        }
+      }
+      mont_execute_transaction_reset: {
+        Args: { p_user_id: string; p_expected_hash: string }
+        Returns: { deleted: number; backup_id: string | null }
+      }
+    }
     Enums: {
       goal_status: 'active' | 'completed' | 'paused' | 'cancelled'
     }
