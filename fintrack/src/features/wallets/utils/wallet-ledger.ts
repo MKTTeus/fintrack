@@ -70,9 +70,9 @@ export function getOpenCardCycle(closingDay: number | null, today = new Date()) 
   if (!closingDay || closingDay < 1 || closingDay > 31) return null
   const year = today.getFullYear(), month = today.getMonth()
   const thisClosing = monthDay(year, month, closingDay)
-  const closing = today.getTime() <= thisClosing.getTime()
+  const closing = today.getDate() <= thisClosing.getDate()
     ? thisClosing : monthDay(year, month + 1, closingDay)
-  const previousClosing = today.getTime() <= thisClosing.getTime()
+  const previousClosing = today.getDate() <= thisClosing.getDate()
     ? monthDay(year, month - 1, closingDay) : thisClosing
   const start = new Date(previousClosing.getFullYear(), previousClosing.getMonth(), previousClosing.getDate() + 1)
   return { start: dateKey(start), end: dateKey(closing), closingDate: dateKey(closing) }
