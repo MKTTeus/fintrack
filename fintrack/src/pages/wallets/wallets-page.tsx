@@ -7,6 +7,7 @@ import { WalletSummaryCards } from '@/features/wallets/components/wallet-summary
 import { WalletAccountsGrid } from '@/features/wallets/components/wallet-accounts-grid'
 import { WalletTransferDialog } from '@/features/wallets/components/wallet-transfer-dialog'
 import { WalletTransfersList } from '@/features/wallets/components/wallet-transfers-list'
+import { CreditCardPaymentsList } from '@/features/wallets/components/credit-card-payments-list'
 import { useCreateCreditWalletWithCard } from '@/features/wallets/hooks/use-create-credit-wallet-with-card'
 import { WalletTable } from '@/features/wallets/components/wallet-table'
 import { useWallets } from '@/features/wallets/hooks/use-wallets'
@@ -112,6 +113,11 @@ export function WalletsPage() {
         <section className="space-y-4">
           <h2 className="text-lg font-semibold tracking-tight">Transferências recentes</h2>
           <WalletTransfersList wallets={wallets} />
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold tracking-tight">Pagamentos de cartão recentes</h2>
+          <CreditCardPaymentsList wallets={wallets} />
         </section>
 
         <section className="space-y-4">
