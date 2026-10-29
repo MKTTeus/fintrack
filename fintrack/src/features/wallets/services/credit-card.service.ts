@@ -115,3 +115,25 @@ export async function updateCreditCard(
 
   return data
 }
+
+/** Creates both records atomically through an invoker-rights database function. */
+export async function createCreditWalletWithCard(input: {
+  name: string
+  description: string | null
+  bank_name: string
+  card_name: string
+  last_four_digits: string | null
+  credit_limit: number | null
+  closing_day: number | null
+  due_day: number | null
+}): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Usuário não autenticado')
+  const { error } = await supabase.rpc('create_credit_wallet_with_card', {
+    p_name: input.name, p_description: input.description,
+    p_bank_name: input.bank_name, p_card_name: input.card_name,
+    p_last_four_digits: input.last_four_digits, p_credit_limit: input.credit_limit,
+    p_closing_day: input.closing_day, p_due_day: input.due_day,
+  })
+  if (error) throw error
+}
