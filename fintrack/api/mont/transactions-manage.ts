@@ -38,7 +38,6 @@ const deleteSchema = z.strictObject({
 })
 
 const fields = 'id,title,amount,type,category,transaction_date,wallet_id'
-type Expected = z.infer<typeof snapshot>
 
 function parseBody(input: unknown) {
   if (!input || typeof input !== 'object') throw new ApiError(400, 'invalid_body', 'Corpo JSON inválido')
