@@ -4,9 +4,14 @@ import { resolveFinancialRange } from './financial-summary.js'
 type Entry = { title: string; amount: number; type: 'income' | 'expense'; category: string; transaction_date: string; wallet_id: string | null }
 const money = (cents: number) => Math.round(cents) / 100
 const empty = () => ({ income: 0, expenses: 0, count: 0 })
-function monthBefore(value: string) {
-  const [y, m] = value.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 2, 1)).toISOString().slice(0, 7)
+function fillMissingMonths(months: Map<string, ReturnType<typeof empty>>, from: string, to: string) {
+  const [startYear, startMonth] = from.slice(0, 7).split('-').map(Number)
+  const limit = to.slice(0, 7)
+  for (let i = 0; i <= 60; i++) {
+    const month = new Date(Date.UTC(startYear, startMonth - 1 + i, 1)).toISOString().slice(0, 7)
+    if (month > limit) break
+    if (!months.has(month)) months.set(month, empty())
+  }
 }
 
 export default {
@@ -58,6 +63,7 @@ export default {
         if ((data ?? []).length < 500) { completed = true; break }
       }
       if (!completed) throw new ApiError(413, 'too_many_transactions', 'Relatório muito extenso; reduza o período')
+      fillMissingMonths(monthly, from, to)
       const months = [...monthly.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([month, row]) => ({
         month, income: money(row.income), expenses: money(row.expenses),
         net: money(row.income - row.expenses), count: row.count,
