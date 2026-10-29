@@ -37,7 +37,7 @@ export const walletSchema = z.object({
     .number({
       error: 'Informe um valor válido',
     })
-    .min(0, 'O valor não pode ser negativo'),
+    .finite('Informe um saldo válido'),
 
   color: optionalText,
 
@@ -92,7 +92,10 @@ export const walletEditSchema = z.object({
 
   observations: optionalText,
 
-  current_balance: optionalNumber,
+  current_balance: z.preprocess(
+    (value) => value === '' || value === null || value === undefined ? undefined : Number(value),
+    z.number().finite().optional(),
+  ),
 
   card_name: optionalText,
 
