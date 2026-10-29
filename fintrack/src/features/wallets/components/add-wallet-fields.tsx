@@ -94,6 +94,7 @@ export function AddWalletFields({
   if (type === 'pix') {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
+        <NumberField form={form} name="current_balance" label="Saldo inicial (base do histórico)" placeholder="Ex: 100" />
         <TextField
           form={form}
           name="name"
@@ -126,6 +127,7 @@ export function AddWalletFields({
   if (type === 'debit_card') {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
+        <NumberField form={form} name="current_balance" label="Saldo inicial (base do histórico)" placeholder="Ex: 100" />
         <TextField
           form={form}
           name="name"
