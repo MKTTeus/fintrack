@@ -31,7 +31,7 @@ export function BalanceChart() {
   }
 
   // Check if all data is empty (all zeros)
-  const hasData = data?.some((item) => item.balance > 0)
+  const hasData = data?.some((item) => item.balance !== 0)
 
   if (!hasData) {
     return (
