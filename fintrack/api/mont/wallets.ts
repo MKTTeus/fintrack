@@ -1,4 +1,4 @@
-import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont'
+import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont.js'
 
 export default {
   async fetch(request: Request): Promise<Response> {
