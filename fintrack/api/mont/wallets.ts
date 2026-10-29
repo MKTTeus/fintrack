@@ -7,18 +7,36 @@ export default {
     }
     try {
       const { supabase, userId } = requireMontAccess(request)
-      const { data, error } = await supabase
-        .from('wallets')
-        .select('id,name,type,is_active')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('created_at', { ascending: true })
-
-      if (error) {
-        console.error('Mont wallet lookup failed:', error.code)
-        throw new ApiError(502, 'upstream_error', 'Não foi possível consultar as carteiras')
+      let result
+      try {
+        result = await supabase
+          .from('wallets')
+          .select('id,name,type,is_active')
+          .eq('user_id', userId)
+          .eq('is_active', true)
+          .order('created_at', { ascending: true })
+      } catch (failure) {
+        // Do not print error messages, URLs, authorization headers or keys.
+        console.error(
+          'Mont wallet lookup failed before receiving Supabase response:',
+          failure instanceof Error ? failure.name : 'unknown',
+        )
+        throw new ApiError(
+          502,
+          'supabase_connection_failed',
+          'A função do FinTrack não conseguiu se comunicar com o Supabase. Confira a URL e a disponibilidade do banco.',
+        )
       }
-      return jsonResponse({ wallets: data ?? [] })
+
+      if (result.error) {
+        console.error('Mont wallet lookup failed:', result.error.code)
+        throw new ApiError(
+          502,
+          'supabase_query_failed',
+          'O Supabase recusou a consulta das carteiras. Confira o projeto, a chave secreta e a tabela wallets.',
+        )
+      }
+      return jsonResponse({ wallets: result.data ?? [] })
     } catch (error) {
       return errorResponse(error)
     }
