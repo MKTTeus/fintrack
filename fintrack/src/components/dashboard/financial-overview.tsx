@@ -55,7 +55,7 @@ export function FinancialOverview() {
     )
   }
 
-  if (!hasTransactions) {
+  if (!hasTransactions && !summary?.balance) {
     return <DashboardEmptyState />
   }
 
