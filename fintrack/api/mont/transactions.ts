@@ -1,4 +1,4 @@
-import { checkCategory, cleanCategoryName } from '../../server/categories.js'
+import { checkCategory } from '../../server/categories.js'
 import { z } from 'zod'
 
 import { ApiError, errorResponse, jsonResponse, requireMontAccess, transactionId } from '../../server/mont.js'
