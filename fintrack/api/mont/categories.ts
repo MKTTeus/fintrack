@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont.js'
-import { allowedCategories, checkCategory, cleanCategoryName, isDefaultCategory, DEFAULT_CATEGORIES } from '../../server/categories.js'
+import { allowedCategories, cleanCategoryName, isDefaultCategory, DEFAULT_CATEGORIES } from '../../server/categories.js'
 
 const uuid = z.uuid()
 const payloadSchema = z.strictObject({
