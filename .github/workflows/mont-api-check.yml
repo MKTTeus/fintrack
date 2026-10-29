@@ -37,4 +37,4 @@ jobs:
       - name: Smoke test emitted Node ESM imports
         run: |
           ./node_modules/.bin/tsc --project tsconfig.api.runtime.json
-          node --input-type=module -e "await import('./.mont-api-runtime/api/mont/wallets.js'); await import('./.mont-api-runtime/api/mont/transactions.js'); console.log('API ESM imports OK')"
+          node --input-type=module -e "await import('./.mont-api-runtime/api/mont/wallets.js'); await import('./.mont-api-runtime/api/mont/transactions.js'); const route = (await import('./.mont-api-runtime/api/mont/transactions-manage.js')).default; const r = await route.fetch(new Request('https://example.com/api/mont/transactions-manage')); if(r.status !== 503 || (await r.json()).error !== 'not_configured') process.exit(1); const forbidden = await route.fetch(new Request('https://example.com/api/mont/transactions-manage', { method: 'PUT' })); if(forbidden.status !== 405) process.exit(2); console.log('API ESM imports and permission smoke tests OK')"
