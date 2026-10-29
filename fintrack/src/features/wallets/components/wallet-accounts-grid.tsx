@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pencil, Wallet, Archive } from 'lucide-react'
+import { Pencil, Archive } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { WalletItem } from '../types/wallet.types'
 import { WalletIcon } from './wallet-icon'
@@ -80,7 +80,7 @@ export function WalletAccountsGrid({ wallets }: { wallets: WalletItem[] }) {
       <p className="text-xs leading-5 text-muted-foreground">
         O saldo estimado considera o saldo inicial cadastrado e as movimentações registradas.
         Cartões exibem dívidas em aberto e não integram o saldo disponível das contas.
-        <Wallet className="ml-1 inline size-3" aria-hidden="true" />
+
       </p>
     </>
   )
