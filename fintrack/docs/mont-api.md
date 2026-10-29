@@ -100,3 +100,23 @@ Resposta de exemplo (valores ilustrativos):
 ```
 
 Os valores são somados em centavos, agrupados por categoria e calculados a partir de transações reais de tipo `expense`. A busca pagina explicitamente para não omitir registros quando houver mais de mil lançamentos. O período relativo usa o fuso `America/Sao_Paulo`, e o intervalo personalizado é limitado a cinco anos.
+
+
+### GET /api/mont/transactions-manage
+
+Consulta somente de leitura, restrita ao usuário de `FINTRACK_MONT_USER_ID`. Aceita parâmetros `id`, `search` (parte do título), `type` (`expense` ou `income`), `category`, `wallet_id`, `from`, `to` (datas AAAA-MM-DD) e `limit` (1 a 30, padrão 15). Retorna `{"transactions":[...]}`. A busca é ordenada pela data da transação e criação, decrescente. Não faz busca em contas de outros usuários.
+
+### PATCH /api/mont/transactions-manage
+
+Edição com JSON `{"id":"uuid","expected":{"title":"...","amount":1,"type":"expense","category":"...","transaction_date":"AAAA-MM-DD","wallet_id":"uuid"},"changes":{"category":"Transporte"}}`.
+
+O campo `expected` deve conter o registro exato recuperado por GET, excluindo `id`; `changes` permite apenas título, valor, tipo, categoria, data e carteira, com validação estrita. O servidor valida o proprietário, confere o estado anterior e atualiza somente se os valores ainda coincidirem. Em conflito, devolve 409. Carteiras novas devem pertencer ao usuário e estar ativas.
+
+### DELETE /api/mont/transactions-manage
+
+Exclusão com JSON `{"id":"uuid","expected":{"title":"...","amount":1,"type":"expense","category":"...","transaction_date":"AAAA-MM-DD","wallet_id":"uuid"}}`. O servidor verifica propriedade e snapshot antes de executar. Responde `{"deleted":true,"id":"uuid"}` somente após a exclusão ser confirmada.
+
+**Política Mont:** a API de gravação, edição e exclusão só é chamada a partir do handler de confirmação; o modelo possui somente ferramentas de *preparo* e consulta. A nova rota não deve ser exposta por uma chave no frontend (`VITE_*`). Mantém-se autenticação Bearer e identificação fixa do usuário, como nas rotas anteriores.
+
+`POST /api/mont/transactions` já aceita tanto `income` quanto `expense`; o Mont passa a preparar receitas com confirmação, reutilizando essa rota.
+
