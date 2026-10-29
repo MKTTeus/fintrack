@@ -18,10 +18,7 @@ function aggregateByMonth(
 ): Record<string, Transaction[]> {
   return transactions.reduce(
     (acc, transaction) => {
-      const date = new Date(transaction.transaction_date)
-      const yearMonth = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, '0')}`
+      const yearMonth = transaction.transaction_date.slice(0, 7)
 
       if (!acc[yearMonth]) {
         acc[yearMonth] = []
@@ -89,7 +86,8 @@ export function calculateMonthlyExpenses(
  * Começa do mês mais antigo e vai acumulando
  */
 export function calculateCumulativeBalance(
-  transactions: Transaction[]
+  transactions: Transaction[],
+  initialBalance = 0,
 ): BalanceChartData[] {
   const aggregated = aggregateByMonth(transactions)
   const sortedMonths = Object.keys(aggregated).sort()
@@ -114,9 +112,9 @@ export function calculateCumulativeBalance(
     'Dez',
   ]
 
-  let cumulativeBalance = 0
+  let cumulativeBalance = initialBalance
 
-  return lastTwelveMonths.map((yearMonth) => {
+  return sortedMonths.map((yearMonth) => {
     const monthTransactions = aggregated[yearMonth]
     const monthIndex = parseInt(yearMonth.split('-')[1]) - 1
 
@@ -134,7 +132,7 @@ export function calculateCumulativeBalance(
       month: monthLabels[monthIndex],
       balance: cumulativeBalance,
     }
-  })
+  }).slice(-12)
 }
 
 /**
