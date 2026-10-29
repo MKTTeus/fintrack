@@ -121,7 +121,7 @@ export default {
           .order('created_at', { ascending: false })
           .limit(Number(limitText))
         if (only) query = query.eq('id', only)
-        if (type) query = query.eq('type', type)
+        if (type) query = query.eq('type', type as 'income' | 'expense')
         if (category) query = query.eq('category', category)
         if (wallet) query = query.eq('wallet_id', wallet)
         if (from) query = query.gte('transaction_date', from)
