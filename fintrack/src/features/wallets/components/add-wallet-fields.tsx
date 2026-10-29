@@ -177,7 +177,7 @@ export function AddWalletFields({
       <NumberField
         form={form}
         name="current_balance"
-        label="Saldo inicial"
+        label="Saldo inicial (base do histórico)"
         placeholder="Ex: 1000"
       />
       <div className="sm:col-span-2">
