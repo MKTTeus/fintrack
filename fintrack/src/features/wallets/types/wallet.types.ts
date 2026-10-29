@@ -71,6 +71,8 @@ export interface WalletItem {
   name: string
   description: string
   currentValue: string
+  openingBalance?: number
+  outstandingAmount?: number
   currentHint: string
   transactions: number
   spentThisMonth: string
