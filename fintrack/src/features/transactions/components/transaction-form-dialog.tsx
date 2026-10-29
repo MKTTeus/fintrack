@@ -34,9 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import {
-  transactionCategories,
-} from "../constants/transaction-categories"
+import { useTransactionCategories } from "../hooks/use-transaction-categories"
 import { useWallets } from "@/features/wallets/hooks/use-wallets"
 
 import {
@@ -52,6 +50,7 @@ export function TransactionFormDialog() {
   const { mutateAsync } =
     useCreateTransaction()
   const { wallets, walletsQuery } = useWallets()
+  const { categories: availableCategories } = useTransactionCategories()
   const isWalletUnavailable =
     walletsQuery.isLoading || wallets.length === 0
 
@@ -213,7 +212,7 @@ export function TransactionFormDialog() {
                         </SelectTrigger>
 
                         <SelectContent>
-                          {transactionCategories.map((category) => (
+                          {availableCategories.map((category) => (
                             <SelectItem key={category} value={category}>
                               {category}
                             </SelectItem>
