@@ -7,6 +7,7 @@ import { WalletSummaryCards } from '@/features/wallets/components/wallet-summary
 import { WalletAccountsGrid } from '@/features/wallets/components/wallet-accounts-grid'
 import { WalletTransferDialog } from '@/features/wallets/components/wallet-transfer-dialog'
 import { WalletTransfersList } from '@/features/wallets/components/wallet-transfers-list'
+import { useCreateCreditWalletWithCard } from '@/features/wallets/hooks/use-create-credit-wallet-with-card'
 import { WalletTable } from '@/features/wallets/components/wallet-table'
 import { useWallets } from '@/features/wallets/hooks/use-wallets'
 import type { WalletFormData } from '@/features/wallets/schemas/wallet.schema'
@@ -14,7 +15,6 @@ import { serializeWalletMetadata } from '@/features/wallets/utils/wallet-metadat
 
 export function WalletsPage() {
   const {
-    createCreditCard,
     createWallet,
     isError,
     isLoading,
@@ -23,6 +23,7 @@ export function WalletsPage() {
     wallets,
     walletGroups,
   } = useWallets()
+  const createCreditWallet = useCreateCreditWalletWithCard()
   const [selectedWalletId, setSelectedWalletId] =
     useState<string | null>(null)
 
@@ -35,7 +36,23 @@ export function WalletsPage() {
   )
 
   async function handleCreateWallet(data: WalletFormData) {
-    const wallet = await createWallet.mutateAsync({
+    if (data.type === 'credit_card') {
+      if (!data.bank?.trim()) throw new Error('Informe o banco para cadastrar o cartão.')
+      await createCreditWallet.mutateAsync({
+        name: data.name,
+        description: serializeWalletMetadata({
+          bank: data.bank, description: data.description, observations: data.observations,
+        }),
+        bank_name: data.bank.trim(),
+        card_name: data.card_name?.trim() || data.name,
+        last_four_digits: data.last_four_digits?.trim() || null,
+        credit_limit: data.credit_limit ?? null,
+        closing_day: data.closing_day ?? null,
+        due_day: data.due_day ?? null,
+      })
+      return
+    }
+    await createWallet.mutateAsync({
       name: data.name,
       type: data.type,
       description: serializeWalletMetadata({
@@ -52,17 +69,6 @@ export function WalletsPage() {
       icon: null,
     })
 
-    if (data.type === 'credit_card') {
-      await createCreditCard.mutateAsync({
-        wallet_id: wallet.id,
-        bank_name: data.bank || null,
-        card_name: data.card_name || data.name,
-        last_four_digits: data.last_four_digits || null,
-        credit_limit: data.credit_limit ?? null,
-        closing_day: data.closing_day ?? null,
-        due_day: data.due_day ?? null,
-      })
-    }
   }
 
   return (
@@ -86,7 +92,7 @@ export function WalletsPage() {
             <AddWalletDialog
               isCreating={
                 createWallet.isPending ||
-                createCreditCard.isPending
+                createCreditWallet.isPending
               }
               onCreate={handleCreateWallet}
               paymentTypes={paymentTypes}
