@@ -68,3 +68,35 @@ Antes de integrar ações reais, peça ao Mont para apresentar um resumo da desp
 ## Vercel / SPA
 
 O `vercel.json` precisa preservar o prefixo `/api`; caso contrário, a regra de SPA pode fazer a função responder HTML do React. A configuração da branch já exclui `/api` do fallback.
+
+
+### GET /api/mont/spending
+
+Resumo **somente de leitura** de despesas por categoria e período, sempre restrito ao usuário do Mont no servidor.
+
+`Authorization: Bearer <MONT_FINTRACK_API_KEY>`
+
+Exemplos de parâmetros:
+
+- `?period=this_month&category=Alimentação`
+- `?period=last_month`
+- `?period=this_year`
+- `?period=last_30_days`
+- `?period=custom&from=2026-10-01&to=2026-10-31&category=Transporte`
+
+Resposta de exemplo (valores ilustrativos):
+
+```json
+{
+  "period": "this_month",
+  "from": "2026-10-01",
+  "to": "2026-10-29",
+  "currency": "BRL",
+  "category": "Alimentação",
+  "total": 120.50,
+  "transaction_count": 4,
+  "categories": [{"name":"Alimentação","total":120.50,"count":4}]
+}
+```
+
+Os valores são somados em centavos, agrupados por categoria e calculados a partir de transações reais de tipo `expense`. A busca pagina explicitamente para não omitir registros quando houver mais de mil lançamentos. O período relativo usa o fuso `America/Sao_Paulo`, e o intervalo personalizado é limitado a cinco anos.
