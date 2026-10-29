@@ -4,6 +4,9 @@ import { AppLayout } from '@/components/layout/app-layout'
 import { AddWalletDialog } from '@/features/wallets/components/add-wallet-dialog'
 import { WalletDetailsDialog } from '@/features/wallets/components/wallet-details-dialog'
 import { WalletSummaryCards } from '@/features/wallets/components/wallet-summary-cards'
+import { WalletAccountsGrid } from '@/features/wallets/components/wallet-accounts-grid'
+import { WalletTransferDialog } from '@/features/wallets/components/wallet-transfer-dialog'
+import { WalletTransfersList } from '@/features/wallets/components/wallet-transfers-list'
 import { WalletTable } from '@/features/wallets/components/wallet-table'
 import { useWallets } from '@/features/wallets/hooks/use-wallets'
 import type { WalletFormData } from '@/features/wallets/schemas/wallet.schema'
@@ -17,6 +20,7 @@ export function WalletsPage() {
     isLoading,
     paymentTypes,
     summaries,
+    wallets,
     walletGroups,
   } = useWallets()
   const [selectedWalletId, setSelectedWalletId] =
@@ -77,6 +81,8 @@ export function WalletsPage() {
               </p>
             </div>
 
+            <div className="flex flex-wrap items-center gap-2">
+            <WalletTransferDialog wallets={wallets} />
             <AddWalletDialog
               isCreating={
                 createWallet.isPending ||
@@ -85,8 +91,25 @@ export function WalletsPage() {
               onCreate={handleCreateWallet}
               paymentTypes={paymentTypes}
             />
+            </div>
           </div>
 
+          {isError ? (
+            <p role="alert" className="text-sm text-destructive">Não foi possível carregar todas as informações das carteiras.</p>
+          ) : isLoading ? (
+            <div className="h-40 animate-pulse rounded-2xl bg-muted" />
+          ) : (
+            <WalletAccountsGrid wallets={wallets} />
+          )}
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold tracking-tight">Transferências recentes</h2>
+          <WalletTransfersList wallets={wallets} />
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold tracking-tight">Resumo por tipo de carteira</h2>
           <WalletTable
             isError={isError}
             isLoading={isLoading}
