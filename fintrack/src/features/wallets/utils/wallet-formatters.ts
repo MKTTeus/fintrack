@@ -356,6 +356,8 @@ export function walletToWalletItem(
       getWalletDescriptionText(wallet.description) ??
       config.description,
     currentValue: formattedBalance,
+    openingBalance: Number(wallet.current_balance),
+    outstandingAmount: wallet.type === 'credit_card' ? outstanding : undefined,
     currentHint: wallet.type === 'credit_card' ? 'Total em aberto' : 'Saldo estimado',
     transactions: stats.transactions,
     spentThisMonth: formatCurrency(stats.spent),
