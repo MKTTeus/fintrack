@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 
 import { supabase } from '@/lib/supabase'
+import { getTransactions } from '@/features/transactions/services/transaction.service'
 import type { Database } from '@/types/database.types'
 
 import {
@@ -502,32 +503,15 @@ async function getReportSourceData(): Promise<ReportSourceData> {
     throw new Error('Usuário não autenticado')
   }
 
-  const [transactionsResult, walletsResult] = await Promise.all([
-    supabase
-      .from('transactions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('transaction_date', { ascending: false }),
-    supabase
-      .from('wallets')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
+  const [transactions, walletsResult] = await Promise.all([
+    getTransactions(),
+    supabase.from('wallets').select('*')
+      .eq('user_id', user.id).eq('is_active', true)
       .order('created_at', { ascending: true }),
   ])
 
-  if (transactionsResult.error) {
-    throw transactionsResult.error
-  }
-
-  if (walletsResult.error) {
-    throw walletsResult.error
-  }
-
-  return {
-    transactions: transactionsResult.data ?? [],
-    wallets: walletsResult.data ?? [],
-  }
+  if (walletsResult.error) throw walletsResult.error
+  return { transactions, wallets: walletsResult.data ?? [] }
 }
 
 export async function getReportsData(
