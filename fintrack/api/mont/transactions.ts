@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { ApiError, errorResponse, jsonResponse, requireMontAccess, transactionId } from '../../server/mont'
+import { ApiError, errorResponse, jsonResponse, requireMontAccess, transactionId } from '../../server/mont.js'
 
 const categoryOptions = [
   'Salário', 'Freelance', 'Investimentos', 'Alimentação', 'Transporte',
