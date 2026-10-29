@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select'
 import { useWallets } from '@/features/wallets/hooks/use-wallets'
 
-import { transactionCategories } from '../constants/transaction-categories'
+import { useTransactionCategories } from '../hooks/use-transaction-categories'
 import {
   transactionSchema,
   type TransactionFormData,
@@ -43,6 +43,7 @@ export function TransactionEditForm({
   const { mutateAsync } =
     useUpdateTransaction()
   const { wallets, walletsQuery } = useWallets()
+  const { categories: availableCategories } = useTransactionCategories()
   const isWalletUnavailable =
     walletsQuery.isLoading || wallets.length === 0
 
@@ -192,7 +193,7 @@ export function TransactionEditForm({
                   </FormControl>
 
                   <SelectContent>
-                    {transactionCategories.map(
+                    {availableCategories.map(
                       (category) => (
                         <SelectItem
                           key={category}

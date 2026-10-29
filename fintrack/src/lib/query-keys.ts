@@ -1,4 +1,5 @@
 export const queryKeys = {
+  transactionCategories: { list: ['transaction-categories', 'list'] as const },
   transactions: {
     list: ['transactions', 'list'] as const,
     details: (id: string) =>

@@ -1,12 +1,7 @@
+import { checkCategory, cleanCategoryName } from '../../server/categories.js'
 import { z } from 'zod'
 
 import { ApiError, errorResponse, jsonResponse, requireMontAccess, transactionId } from '../../server/mont.js'
-
-const categoryOptions = [
-  'Salário', 'Freelance', 'Investimentos', 'Alimentação', 'Transporte',
-  'Saúde', 'Lazer', 'Compras', 'Moradia', 'Contas e Serviços',
-  'Educação', 'Viagens', 'Presentes', 'Doações', 'Outros',
-] as const
 
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
   const date = new Date(`${value}T00:00:00Z`)
@@ -20,7 +15,7 @@ const createTransactionSchema = z.strictObject({
     'Valor deve ter no máximo duas casas decimais',
   ),
   type: z.enum(['expense', 'income']),
-  category: z.enum(categoryOptions),
+  category: z.string().trim().min(2).max(50),
   transaction_date: dateSchema,
   wallet_id: z.uuid(),
   request_id: z.string().min(8).max(128).regex(/^[a-zA-Z0-9_-]+$/),
@@ -52,6 +47,7 @@ export default {
         throw new ApiError(422, 'invalid_fields', 'Campos inválidos: confira título, valor, categoria, data e carteira')
       }
       const input = validated.data
+      input.category = await checkCategory(supabase, userId, input.category)
 
       const { data: wallet, error: walletError } = await supabase
         .from('wallets')

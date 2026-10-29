@@ -1,12 +1,9 @@
+import { checkCategory, cleanCategoryName } from '../../server/categories.js'
 import { z } from 'zod'
 import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont.js'
 
 const uuid = z.uuid()
-const categories = z.enum([
-  'Salário', 'Freelance', 'Investimentos', 'Alimentação', 'Transporte',
-  'Saúde', 'Lazer', 'Compras', 'Moradia', 'Contas e Serviços',
-  'Educação', 'Viagens', 'Presentes', 'Doações', 'Outros',
-])
+const categories = z.string().trim().min(2).max(50)
 const validDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
   const date = new Date(`${value}T00:00:00Z`)
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
@@ -99,6 +96,7 @@ export default {
         if (category !== null && !categories.safeParse(category).success) {
           throw new ApiError(422, 'invalid_category', 'Categoria inválida')
         }
+        if (category !== null) await checkCategory(supabase, userId, category)
         if (wallet !== null && !uuid.safeParse(wallet).success) {
           throw new ApiError(422, 'invalid_wallet', 'Carteira inválida')
         }
@@ -159,6 +157,7 @@ export default {
 
       if (request.method === 'PATCH') {
         const changes = (parsed.data as z.infer<typeof modifySchema>).changes
+        if (changes.category) changes.category = await checkCategory(supabase, userId, changes.category)
         if (changes.wallet_id) {
           const { data: ownedWallet, error: walletError } = await supabase
             .from('wallets').select('id').eq('id', changes.wallet_id)
