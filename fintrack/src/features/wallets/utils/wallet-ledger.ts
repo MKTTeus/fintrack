@@ -3,6 +3,7 @@ import type { Database } from '@/types/database.types'
 type Wallet = Database['public']['Tables']['wallets']['Row']
 type CreditCard = Database['public']['Tables']['credit_cards']['Row']
 type Transaction = Database['public']['Tables']['transactions']['Row']
+type CashTransaction = Pick<Transaction, 'wallet_id' | 'type' | 'amount'>
 type Transfer = Database['public']['Tables']['wallet_transfers']['Row']
 type CardPayment = Database['public']['Tables']['credit_card_payments']['Row']
 
@@ -13,7 +14,7 @@ type CardPayment = Database['public']['Tables']['credit_card_payments']['Row']
  */
 export function getAvailableWalletBalance(
   wallet: Wallet,
-  transactions: Transaction[],
+  transactions: CashTransaction[],
   transfers: Transfer[] = [],
   cardPayments: CardPayment[] = [],
 ): number {
@@ -31,7 +32,7 @@ export function getAvailableWalletBalance(
 
 export function getTotalAvailableBalance(
   wallets: Wallet[],
-  transactions: Transaction[],
+  transactions: CashTransaction[],
   transfers: Transfer[] = [],
   payments: CardPayment[] = [],
 ): number {
@@ -41,7 +42,7 @@ export function getTotalAvailableBalance(
 
 export function getCardOutstanding(
   card: CreditCard,
-  transactions: Transaction[],
+  transactions: CashTransaction[],
   payments: CardPayment[] = [],
 ): number {
   const charges = transactions.reduce((sum, tx) =>
