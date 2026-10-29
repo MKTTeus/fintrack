@@ -1,4 +1,4 @@
-import { checkCategory, cleanCategoryName } from '../../server/categories.js'
+import { checkCategory } from '../../server/categories.js'
 import { z } from 'zod'
 import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont.js'
 
@@ -39,16 +39,6 @@ const deleteSchema = z.strictObject({
 
 const fields = 'id,title,amount,type,category,transaction_date,wallet_id'
 type Expected = z.infer<typeof snapshot>
-
-function guardSnapshot(query: any, expected: Expected): any {
-  return query
-    .eq('title', expected.title)
-    .eq('amount', expected.amount)
-    .eq('type', expected.type)
-    .eq('category', expected.category)
-    .eq('transaction_date', expected.transaction_date)
-    [expected.wallet_id === null ? 'is' : 'eq']('wallet_id', expected.wallet_id)
-}
 
 function parseBody(input: unknown) {
   if (!input || typeof input !== 'object') throw new ApiError(400, 'invalid_body', 'Corpo JSON inválido')
@@ -168,7 +158,14 @@ export default {
         let query = supabase.from('transactions')
           .update(changes)
           .eq('id', id).eq('user_id', userId)
-        query = guardSnapshot(query, expected)
+          .eq('title', expected.title)
+          .eq('amount', expected.amount)
+          .eq('type', expected.type)
+          .eq('category', expected.category)
+          .eq('transaction_date', expected.transaction_date)
+        query = expected.wallet_id === null
+          ? query.is('wallet_id', null)
+          : query.eq('wallet_id', expected.wallet_id)
         const { data: updated, error } = await query.select(fields).maybeSingle()
         if (error) {
           console.error('Mont transaction update failed:', error.code)
@@ -180,7 +177,14 @@ export default {
 
       let query = supabase.from('transactions')
         .delete().eq('id', id).eq('user_id', userId)
-      query = guardSnapshot(query, expected)
+        .eq('title', expected.title)
+        .eq('amount', expected.amount)
+        .eq('type', expected.type)
+        .eq('category', expected.category)
+        .eq('transaction_date', expected.transaction_date)
+      query = expected.wallet_id === null
+        ? query.is('wallet_id', null)
+        : query.eq('wallet_id', expected.wallet_id)
       const { data: deleted, error } = await query.select('id').maybeSingle()
       if (error) {
         console.error('Mont transaction delete failed:', error.code)
