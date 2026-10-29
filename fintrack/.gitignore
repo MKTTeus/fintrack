@@ -61,3 +61,5 @@ node_modules/
 INSTRUCOES.md
 skills-lock.json
 package-lock.json
+# Local artifacts from API Node ESM smoke test
+.mont-api-runtime/

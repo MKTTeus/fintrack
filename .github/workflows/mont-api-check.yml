@@ -1,0 +1,40 @@
+name: Verify FinTrack Mont API
+
+on:
+  pull_request:
+    paths:
+      - "fintrack/api/**"
+      - "fintrack/server/**"
+      - "fintrack/tsconfig.api.json"
+      - "fintrack/package.json"
+      - "fintrack/vercel.json"
+      - ".github/workflows/mont-api-check.yml"
+  push:
+    branches:
+      - feature/mont-api-integration
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fintrack
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: fintrack/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck API and build frontend
+        run: npm run build
+      - name: Smoke test emitted Node ESM imports
+        run: |
+          ./node_modules/.bin/tsc --project tsconfig.api.runtime.json
+          node --input-type=module -e "await import('./.mont-api-runtime/api/mont/wallets.js'); await import('./.mont-api-runtime/api/mont/transactions.js'); console.log('API ESM imports OK')"

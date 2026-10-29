@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && tsc --project tsconfig.api.json && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck:api": "tsc --project tsconfig.api.json"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
