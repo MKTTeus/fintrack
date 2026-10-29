@@ -92,11 +92,6 @@ export function calculateCumulativeBalance(
   const aggregated = aggregateByMonth(transactions)
   const sortedMonths = Object.keys(aggregated).sort()
 
-  // Pegar últimos 12 meses
-  const lastTwelveMonths = sortedMonths.slice(
-    Math.max(0, sortedMonths.length - 12)
-  )
-
   const monthLabels = [
     'Jan',
     'Fev',
