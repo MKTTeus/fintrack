@@ -177,6 +177,9 @@ export function WalletEditDialog({
                   form={form}
                   type={wallet.type}
                 />
+                {wallet.type !== 'credit_card' && (
+                  <p className="text-xs text-muted-foreground">O saldo inicial é somado às receitas e descontado pelas despesas do histórico. Não informe aqui o saldo atual do banco.</p>
+                )
 
                 {form.formState.errors.root?.message ? (
                   <p className="text-sm text-destructive">
