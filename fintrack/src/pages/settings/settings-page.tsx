@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useTheme } from 'next-themes'
 
 import { AppLayout } from '@/components/layout/app-layout'
+import { CategoriesSettingsCard } from '@/features/settings/components/categories-settings-card'
 import { AccountSettingsCard } from '@/features/settings/components/account-settings-card'
 import { AppearanceSettingsCard } from '@/features/settings/components/appearance-settings-card'
 import { DataSettingsCard } from '@/features/settings/components/data-settings-card'
@@ -76,6 +77,7 @@ export function SettingsPage() {
             settings={settings}
             onUpdate={handleUpdateSettings}
           />
+          <CategoriesSettingsCard />
           <AppearanceSettingsCard
             isSaving={updateSettings.isPending}
             settings={settings}
