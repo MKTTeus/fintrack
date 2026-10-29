@@ -444,6 +444,19 @@ export interface Database {
     }
     Views: Record<string, never>
     Functions: {
+      create_credit_wallet_with_card: {
+        Args: {
+          p_name: string
+          p_description: string | null
+          p_bank_name: string
+          p_card_name: string
+          p_last_four_digits?: string | null
+          p_credit_limit?: number | null
+          p_closing_day?: number | null
+          p_due_day?: number | null
+        }
+        Returns: { wallet_id: string; card_id: string }
+      }
       mont_preview_transaction_reset: {
         Args: { p_user_id: string }
         Returns: {
