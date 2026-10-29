@@ -30,4 +30,5 @@ jobs:
           cache-dependency-path: fintrack/package-lock.json
       - run: npm ci
       - run: npm run build
+      - run: npm run test:ledger
       - run: npm run lint
