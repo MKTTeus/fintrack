@@ -54,10 +54,42 @@ export function requireMontAccess(request: Request) {
     throw new ApiError(401, 'unauthorized', 'Credenciais inválidas')
   }
 
-  const supabase = createClient<Database>(supabaseUrl, supabaseSecretKey, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-  })
-  return { supabase, userId, sharedSecret }
+  // Invalid project URLs otherwise throw inside createClient and appear as an
+  // opaque HTTP 500. Provide a safe configuration status without leaking values.
+  try {
+    const url = new URL(supabaseUrl)
+    if (
+      url.protocol !== 'https:' ||
+      !url.hostname ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash
+    ) {
+      throw new Error('invalid supabase URL')
+    }
+  } catch {
+    throw new ApiError(
+      503,
+      'invalid_supabase_url',
+      'SUPABASE_URL não é uma URL HTTPS válida. Verifique a variável na Vercel (Preview).',
+    )
+  }
+
+  try {
+    const supabase = createClient<Database>(supabaseUrl, supabaseSecretKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    })
+    return { supabase, userId, sharedSecret }
+  } catch (error) {
+    // Never log the original error message: SDK errors could include env values.
+    console.error('Mont API: Supabase client initialization failed', error instanceof Error ? error.name : 'unknown')
+    throw new ApiError(
+      503,
+      'supabase_client_error',
+      'A conexão Supabase não pôde ser inicializada. Confira SUPABASE_URL e SUPABASE_SECRET_KEY no Preview.',
+    )
+  }
 }
 
 /** Deterministic UUID keyed by secret + user + client request ID: safe retries don't duplicate expenses. */
