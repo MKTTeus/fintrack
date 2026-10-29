@@ -1,4 +1,6 @@
 export const queryKeys = {
+  walletTransfers: { list: ['wallet-transfers', 'list'] as const },
+  creditCardPayments: { list: ['credit-card-payments', 'list'] as const },
   transactionCategories: { list: ['transaction-categories', 'list'] as const },
   transactions: {
     list: ['transactions', 'list'] as const,
