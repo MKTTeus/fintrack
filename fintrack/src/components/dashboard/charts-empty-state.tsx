@@ -16,6 +16,8 @@ export function ChartsEmptyState({
     <div
       className="
         flex
+        h-full
+        min-w-0
         flex-col
         items-center
         justify-center
@@ -24,7 +26,8 @@ export function ChartsEmptyState({
         border-dashed
         border-border
         bg-muted/30
-        py-12
+        px-4
+        py-6
         text-center
       "
     >
@@ -43,8 +46,9 @@ export function ChartsEmptyState({
       <p
         className="
           mt-1
-          max-w-sm
-          text-sm
+          max-w-xs
+          text-xs sm:text-sm
+          leading-relaxed
           text-muted-foreground
         "
       >
@@ -61,7 +65,7 @@ export function ChartsEmptyState({
           "
         >
           <Plus className="size-3" />
-          Primeira Transação
+          Ver transações
         </Button>
       </Link>
     </div>
