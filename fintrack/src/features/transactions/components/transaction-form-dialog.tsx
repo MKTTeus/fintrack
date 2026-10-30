@@ -91,7 +91,7 @@ export function TransactionFormDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg rounded-3xl border border-border bg-card p-6 max-h-[calc(100dvh-2rem)] overflow-y-auto">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] overflow-x-hidden overflow-y-auto rounded-2xl border border-border bg-card p-4 sm:max-w-xl sm:rounded-3xl sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium tracking-tight">
             Nova transação
@@ -130,7 +130,7 @@ export function TransactionFormDialog() {
               )}
             />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name="amount"
