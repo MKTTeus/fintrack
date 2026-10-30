@@ -11,7 +11,7 @@ export function WalletSummaryCard({
   const styles = summaryVariantStyles[variant]
 
   return (
-    <div className="rounded-3xl border border-border bg-card p-6">
+    <div className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm text-muted-foreground">
@@ -21,7 +21,7 @@ export function WalletSummaryCard({
           <h3
             className={`
               mt-3
-              text-3xl
+              break-words text-[clamp(1.2rem,2vw,1.75rem)]
               font-medium
               tracking-tight
               ${styles.value}

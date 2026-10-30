@@ -9,6 +9,98 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      wallet_transfers: {
+        Row: {
+          id: string
+          user_id: string
+          source_wallet_id: string
+          destination_wallet_id: string
+          amount: number
+          transfer_date: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          source_wallet_id: string
+          destination_wallet_id: string
+          amount: number
+          transfer_date?: string
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          source_wallet_id?: string
+          destination_wallet_id?: string
+          amount?: number
+          transfer_date?: string
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'wallet_transfers_source_wallet_id_fkey'
+            columns: ['source_wallet_id']
+            referencedRelation: 'wallets'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'wallet_transfers_destination_wallet_id_fkey'
+            columns: ['destination_wallet_id']
+            referencedRelation: 'wallets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      credit_card_payments: {
+        Row: {
+          id: string
+          user_id: string
+          credit_card_id: string
+          source_wallet_id: string
+          amount: number
+          payment_date: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          credit_card_id: string
+          source_wallet_id: string
+          amount: number
+          payment_date?: string
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          credit_card_id?: string
+          source_wallet_id?: string
+          amount?: number
+          payment_date?: string
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'credit_card_payments_credit_card_id_fkey'
+            columns: ['credit_card_id']
+            referencedRelation: 'credit_cards'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'credit_card_payments_source_wallet_id_fkey'
+            columns: ['source_wallet_id']
+            referencedRelation: 'wallets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       transaction_categories: {
         Row: {
           id: string
@@ -352,6 +444,19 @@ export interface Database {
     }
     Views: Record<string, never>
     Functions: {
+      create_credit_wallet_with_card: {
+        Args: {
+          p_name: string
+          p_description: string | null
+          p_bank_name: string
+          p_card_name: string
+          p_last_four_digits?: string | null
+          p_credit_limit?: number | null
+          p_closing_day?: number | null
+          p_due_day?: number | null
+        }
+        Returns: { wallet_id: string; card_id: string }
+      }
       mont_preview_transaction_reset: {
         Args: { p_user_id: string }
         Returns: {

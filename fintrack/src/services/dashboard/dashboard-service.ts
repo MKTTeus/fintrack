@@ -1,6 +1,10 @@
 import { supabase } from '@/lib/supabase'
 
 import { formatCurrency } from '@/utils/transaction-formatters'
+import { getTotalAvailableBalance } from '@/features/wallets/utils/wallet-ledger'
+import { getTransactions } from '@/features/transactions/services/transaction.service'
+import { listWalletTransfers } from '@/features/wallets/services/wallet-transfer.service'
+import { listCreditCardPayments } from '@/features/wallets/services/credit-card-payment.service'
 
 import {
   calculateCumulativeBalance,
@@ -22,49 +26,36 @@ import type { Transaction } from './dashboard-aggregation'
  * Busca todas as transações do usuário autenticado
  * Sem limite, para cálculos de gráficos históricos
  */
-async function getAllUserTransactions(): Promise<
-  Transaction[]
-> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+async function getAllUserTransactions(): Promise<Transaction[]> {
+  const records = await getTransactions()
+  return records.map(row => ({
+    amount: Number(row.amount),
+    type: row.type,
+    transaction_date: row.transaction_date,
+  }))
+}
 
-  if (!user) {
-    throw new Error('Usuário não autenticado')
+async function getCashLedger() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Usuário não autenticado')
+  const [walletsResult, transactions, transfers, payments] = await Promise.all([
+    supabase.from('wallets').select('*').eq('user_id', user.id).eq('is_active', true),
+    getTransactions(),
+    listWalletTransfers(),
+    listCreditCardPayments(),
+  ])
+  if (walletsResult.error) throw walletsResult.error
+  return {
+    wallets: walletsResult.data ?? [],
+    transactions,
+    transfers,
+    payments,
   }
-
-  const { data, error } = await supabase
-    .from('transactions')
-    .select('amount, type, transaction_date')
-    .eq('user_id', user.id)
-    .order('transaction_date', { ascending: true })
-
-  if (error) {
-    throw error
-  }
-
-  return data || []
 }
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error('Usuário não autenticado')
-  }
-
-  const { data, error } = await supabase
-    .from('transactions')
-    .select('amount, type')
-    .eq('user_id', user.id)
-
-  if (error) {
-    throw error
-  }
-
-  const income = data
+  const { wallets, transactions, transfers, payments } = await getCashLedger()
+  const income = transactions
     .filter(
       (transaction) =>
         transaction.type === 'income'
@@ -75,7 +66,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       0
     )
 
-  const expenses = data
+  const expenses = transactions
     .filter(
       (transaction) =>
         transaction.type === 'expense'
@@ -87,10 +78,10 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     )
 
   return {
-    balance: income - expenses,
+    balance: getTotalAvailableBalance(wallets, transactions, transfers, payments),
     income,
     expenses,
-    transactionsCount: data.length,
+    transactionsCount: transactions.length,
   }
 }
 
@@ -101,7 +92,7 @@ export async function getDashboardMetrics(): Promise<Metric[]> {
     {
       title: 'Saldo Total',
       value: formatCurrency(summary.balance),
-      change: 'Saldo atual',
+      change: 'Saldo estimado das carteiras',
       variant: 'default',
     },
     {
@@ -143,13 +134,39 @@ export async function getBalanceChartData(): Promise<
   BalanceChartData[]
 > {
   try {
-    const transactions = await getAllUserTransactions()
-
-    if (transactions.length === 0) {
-      return getEmptyBalanceChartData()
+    const { wallets, transactions, transfers, payments } = await getCashLedger()
+    const cashWalletIds = new Set(
+      wallets.filter(wallet => wallet.type !== 'credit_card').map(wallet => wallet.id),
+    )
+    const initialBalance = wallets
+      .filter(wallet => wallet.type !== 'credit_card')
+      .reduce((sum, wallet) => sum + Number(wallet.current_balance), 0)
+    const flows: Transaction[] = transactions
+      .filter(transaction => transaction.wallet_id !== null
+        && cashWalletIds.has(transaction.wallet_id))
+      .map(transaction => ({
+        amount: Number(transaction.amount),
+        type: transaction.type,
+        transaction_date: transaction.transaction_date,
+      }))
+    // Transfers only change the total when money moves to/from an archived wallet.
+    for (const transfer of transfers) {
+      if (cashWalletIds.has(transfer.source_wallet_id)) {
+        flows.push({ type: 'expense', amount: Number(transfer.amount), transaction_date: transfer.transfer_date })
+      }
+      if (cashWalletIds.has(transfer.destination_wallet_id)) {
+        flows.push({ type: 'income', amount: Number(transfer.amount), transaction_date: transfer.transfer_date })
+      }
     }
-
-    return calculateCumulativeBalance(transactions)
+    for (const payment of payments) {
+      if (cashWalletIds.has(payment.source_wallet_id)) {
+        flows.push({ type: 'expense', amount: Number(payment.amount), transaction_date: payment.payment_date })
+      }
+    }
+    if (flows.length === 0) return initialBalance !== 0
+      ? [{ month: 'Saldo inicial', balance: initialBalance }]
+      : getEmptyBalanceChartData()
+    return calculateCumulativeBalance(flows, initialBalance)
   } catch (error) {
     console.error(
       'Erro ao buscar dados de saldo:',

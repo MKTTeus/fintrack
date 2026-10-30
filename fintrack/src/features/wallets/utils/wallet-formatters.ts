@@ -9,6 +9,9 @@ import {
 import type { LucideIcon } from 'lucide-react'
 
 import type { Transaction } from '@/features/transactions/types/transaction.types'
+import type { WalletTransfer } from '../services/wallet-transfer.service'
+import type { CreditCardPayment } from '../services/credit-card-payment.service'
+import { getAvailableWalletBalance, getCardOutstanding, getOpenCycleCharges } from './wallet-ledger'
 import { formatCurrency } from '@/utils/transaction-formatters'
 
 import type {
@@ -151,16 +154,6 @@ function getMonthlyStats(transactions: Transaction[]): WalletStats {
         transactions: 0,
       },
     )
-}
-
-function getTransactionBalance(transactions: Transaction[]) {
-  return transactions.reduce((total, transaction) => {
-    const amount = Number(transaction.amount)
-
-    return transaction.type === 'income'
-      ? total + amount
-      : total - amount
-  }, 0)
 }
 
 function getWalletIcon(wallet: WalletRecord) {
@@ -325,6 +318,8 @@ export function walletToWalletItem(
   wallet: WalletRecord,
   transactions: Transaction[] = [],
   creditCards: CreditCardRecord[] = [],
+  transfers: WalletTransfer[] = [],
+  payments: CreditCardPayment[] = [],
 ): WalletItem {
   const config = walletTypeConfig[wallet.type]
   const metadata = parseWalletMetadata(wallet.description)
@@ -339,11 +334,19 @@ export function walletToWalletItem(
     stats,
     creditCard,
   )
+  const outstanding = creditCard
+    ? getCardOutstanding(creditCard, walletTransactions, payments)
+    : 0
   const formattedBalance = formatCurrency(
-    getTransactionBalance(walletTransactions),
+    wallet.type === 'credit_card'
+      ? outstanding
+      : getAvailableWalletBalance(wallet, walletTransactions, transfers, payments),
   )
   const creditLimit = Number(creditCard?.credit_limit ?? 0)
-  const availableLimit = Math.max(creditLimit - stats.spent, 0)
+  const availableLimit = Math.max(creditLimit - outstanding, 0)
+  const cycleCharges = creditCard
+    ? getOpenCycleCharges(creditCard, walletTransactions)
+    : null
 
   return {
     id: wallet.id,
@@ -353,7 +356,9 @@ export function walletToWalletItem(
       getWalletDescriptionText(wallet.description) ??
       config.description,
     currentValue: formattedBalance,
-    currentHint: config.currentHint,
+    openingBalance: Number(wallet.current_balance),
+    outstandingAmount: wallet.type === 'credit_card' ? outstanding : undefined,
+    currentHint: wallet.type === 'credit_card' ? 'Total em aberto' : 'Saldo estimado',
     transactions: stats.transactions,
     spentThisMonth: formatCurrency(stats.spent),
     spentHint: config.spentHint,
@@ -376,7 +381,7 @@ export function walletToWalletItem(
       credit:
         wallet.type === 'credit_card'
           ? {
-              invoice: formatCurrency(stats.spent),
+              invoice: formatCurrency(cycleCharges ?? 0),
               availableLimit: creditCard
                 ? formatCurrency(availableLimit)
                 : 'Não informado',
@@ -391,7 +396,7 @@ export function walletToWalletItem(
                       finalDigits:
                         creditCard.last_four_digits ??
                         'Não informado',
-                      invoice: formatCurrency(stats.spent),
+                      invoice: formatCurrency(cycleCharges ?? 0),
                       availableLimit:
                         formatCurrency(availableLimit),
                       dueDate: formatDueDate(creditCard.due_day),
@@ -429,6 +434,8 @@ export function getGroupedWalletItems(
   wallets: WalletRecord[],
   transactions: Transaction[],
   creditCards: CreditCardRecord[] = [],
+  transfers: WalletTransfer[] = [],
+  payments: CreditCardPayment[] = [],
 ): WalletItem[] {
   return walletTypeOrder.map((type) => {
     const config = walletTypeConfig[type]
@@ -463,9 +470,14 @@ export function getGroupedWalletItems(
       name: config.name,
       description: config.description,
       currentValue: formatCurrency(
-        getTransactionBalance(transactionsByType),
+        walletsByType.reduce((total, wallet) => {
+          const card = getCreditCardByWallet(creditCards, wallet.id)
+          return total + (wallet.type === 'credit_card'
+            ? (card ? getCardOutstanding(card, transactionsByType, payments) : 0)
+            : getAvailableWalletBalance(wallet, transactionsByType, transfers, payments))
+        }, 0),
       ),
-      currentHint: config.currentHint,
+      currentHint: type === 'credit_card' ? 'Total em aberto' : 'Saldo estimado',
       transactions: stats.transactions,
       spentThisMonth: formatCurrency(stats.spent),
       spentHint: config.spentHint,
@@ -476,7 +488,7 @@ export function getGroupedWalletItems(
         walletsByType.find((wallet) => wallet.color)?.color ??
         undefined,
       linkedWallets: walletsByType.map((wallet) =>
-        walletToWalletItem(wallet, transactions, creditCards),
+        walletToWalletItem(wallet, transactions, creditCards, transfers, payments),
       ),
       details: {},
     }
@@ -486,42 +498,53 @@ export function getGroupedWalletItems(
 export function getWalletSummaries(
   wallets: WalletRecord[],
   transactions: Transaction[] = [],
+  transfers: WalletTransfer[] = [],
+  payments: CreditCardPayment[] = [],
+  creditCards: CreditCardRecord[] = [],
 ): WalletSummary[] {
   const last30DaysStart = getLast30DaysStart()
   const walletIds = new Set(wallets.map((wallet) => wallet.id))
-  const walletTransactions = transactions.filter(
-    (transaction) =>
-      transaction.wallet_id !== null &&
-      walletIds.has(transaction.wallet_id),
+  const recentTransactions = transactions.filter(
+    (transaction) => transaction.wallet_id !== null
+      && walletIds.has(transaction.wallet_id)
+      && transaction.transaction_date >= last30DaysStart,
   )
-  const recentTransactions = walletTransactions.filter(
-    (transaction) =>
-      transaction.transaction_date >= last30DaysStart,
-  )
+  const availableBalance = wallets
+    .filter(wallet => wallet.type !== 'credit_card')
+    .reduce((total, wallet) =>
+      total + getAvailableWalletBalance(wallet, transactions, transfers, payments), 0)
+  const debt = creditCards
+    .filter(card => wallets.some(wallet => wallet.id === card.wallet_id))
+    .reduce((total, card) => total + getCardOutstanding(card, transactions, payments), 0)
 
   return [
     {
-      title: 'Saldo combinado',
-      value: formatCurrency(
-        getTransactionBalance(walletTransactions),
-      ),
-      detail: 'Saldo calculado por transações',
+      title: 'Saldo disponível estimado',
+      value: formatCurrency(availableBalance),
+      detail: 'Saldos iniciais + movimentações + transferências - pagamentos',
       icon: Wallet,
       variant: 'default',
     },
     {
+      title: 'Faturas em aberto',
+      value: formatCurrency(debt),
+      detail: 'Compras a crédito menos pagamentos registrados',
+      icon: CreditCard,
+      variant: 'expense',
+    },
+    {
       title: 'Carteiras ativas',
       value: String(wallets.length),
-      detail: 'Meios de pagamento configurados',
+      detail: 'Contas e cartões cadastrados',
       icon: CreditCard,
       variant: 'income',
     },
     {
       title: 'Transações (30 dias)',
       value: String(recentTransactions.length),
-      detail: 'Movimentações realizadas',
+      detail: 'Receitas e despesas do período',
       icon: ArrowLeftRight,
-      variant: 'expense',
+      variant: 'default',
     },
   ]
 }

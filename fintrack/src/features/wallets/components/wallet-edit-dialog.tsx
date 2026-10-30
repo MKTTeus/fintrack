@@ -75,7 +75,7 @@ export function WalletEditDialog({
       agency: metadata.agency ?? '',
       account: metadata.account ?? '',
       observations: metadata.observations ?? '',
-      current_balance: undefined,
+      current_balance: wallet?.type === 'credit_card' ? undefined : (wallet?.openingBalance ?? 0),
       card_name:
         wallet?.creditCard?.card_name ??
         wallet?.name ??
@@ -109,7 +109,7 @@ export function WalletEditDialog({
             pixKey: data.pix_key,
             pixKeyType: data.pix_key_type,
           }),
-          ...(wallet.type === 'cash' &&
+          ...(wallet.type !== 'credit_card' &&
             data.current_balance !== undefined && {
               current_balance: data.current_balance,
             }),
@@ -177,6 +177,9 @@ export function WalletEditDialog({
                   form={form}
                   type={wallet.type}
                 />
+                {wallet.type !== 'credit_card' && (
+                  <p className="text-xs text-muted-foreground">O saldo inicial é somado às receitas e descontado pelas despesas do histórico. Não informe aqui o saldo atual do banco.</p>
+                )}
 
                 {form.formState.errors.root?.message ? (
                   <p className="text-sm text-destructive">
@@ -277,6 +280,7 @@ function WalletEditFields({
   if (type === 'pix') {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
+        <NumberField form={form} name="current_balance" label="Saldo inicial" placeholder="Ex: 100" />
         <TextField
           form={form}
           name="name"
@@ -309,6 +313,7 @@ function WalletEditFields({
   if (type === 'debit_card') {
     return (
       <div className="grid gap-4 sm:grid-cols-2">
+        <NumberField form={form} name="current_balance" label="Saldo inicial" placeholder="Ex: 100" />
         <TextField
           form={form}
           name="name"

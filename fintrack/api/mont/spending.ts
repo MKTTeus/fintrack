@@ -1,4 +1,4 @@
-import { checkCategory, cleanCategoryName } from '../../server/categories.js'
+import { checkCategory } from '../../server/categories.js'
 import { ApiError, errorResponse, jsonResponse, requireMontAccess } from '../../server/mont.js'
 
 type Period = 'this_month' | 'last_month' | 'this_year' | 'last_30_days' | 'custom'
@@ -30,7 +30,7 @@ function periodDates(url: URL): { period: Period; from: string; to: string } {
   const y = Number(today.slice(0, 4))
   const m = Number(today.slice(5, 7))
 
-  let from = ''
+  let from: string
   let to = today
   if (period === 'this_month') {
     from = `${today.slice(0, 7)}-01`

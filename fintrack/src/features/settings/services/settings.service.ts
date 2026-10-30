@@ -120,6 +120,10 @@ export async function deleteCurrentUserPublicData(): Promise<void> {
   const user = await getAuthenticatedUser()
 
   const operations = [
+    // Clear transfers and card settlements before wallets (restrictive FKs).
+    supabase.from('wallet_transfers').delete().eq('user_id', user.id),
+    supabase.from('credit_card_payments').delete().eq('user_id', user.id),
+    supabase.from('transaction_categories').delete().eq('user_id', user.id),
     supabase.from('goal_deposits').delete().eq('user_id', user.id),
     supabase.from('transactions').delete().eq('user_id', user.id),
     supabase.from('credit_cards').delete().eq('user_id', user.id),

@@ -19,11 +19,15 @@ import { useDeleteWallet } from './use-delete-wallet'
 import { useUpdateWallet } from './use-update-wallet'
 import { useCreateCreditCard } from './use-create-credit-card'
 import { useUpdateCreditCard } from './use-update-credit-card'
+import { useWalletTransfers } from './use-wallet-transfers'
+import { useCreditCardPayments } from './use-credit-card-payments'
 
 export function useWallets() {
   const { loading, user } = useAuth()
   const transactionsQuery = useTransactions()
   const creditCardsQuery = useCreditCards()
+  const transfersLedger = useWalletTransfers()
+  const cardPaymentsLedger = useCreditCardPayments()
 
   const walletsQuery = useQuery({
     queryKey: queryKeys.wallets.list,
@@ -38,12 +42,16 @@ export function useWallets() {
           wallet,
           transactionsQuery.data ?? [],
           creditCardsQuery.data ?? [],
+          transfersLedger.transfers,
+          cardPaymentsLedger.payments,
         ),
       ),
     [
       creditCardsQuery.data,
       transactionsQuery.data,
       walletsQuery.data,
+      transfersLedger.transfers,
+      cardPaymentsLedger.payments,
     ],
   )
 
@@ -53,11 +61,15 @@ export function useWallets() {
         walletsQuery.data ?? [],
         transactionsQuery.data ?? [],
         creditCardsQuery.data ?? [],
+        transfersLedger.transfers,
+        cardPaymentsLedger.payments,
       ),
     [
       creditCardsQuery.data,
       transactionsQuery.data,
       walletsQuery.data,
+      transfersLedger.transfers,
+      cardPaymentsLedger.payments,
     ],
   )
 
@@ -66,20 +78,25 @@ export function useWallets() {
       getWalletSummaries(
         walletsQuery.data ?? [],
         transactionsQuery.data ?? [],
+        transfersLedger.transfers,
+        cardPaymentsLedger.payments,
+        creditCardsQuery.data ?? [],
       ),
-    [transactionsQuery.data, walletsQuery.data],
+    [transactionsQuery.data, walletsQuery.data, transfersLedger.transfers, cardPaymentsLedger.payments, creditCardsQuery.data],
   )
 
   return {
     isError:
       walletsQuery.isError ||
       transactionsQuery.isError ||
-      creditCardsQuery.isError,
+      creditCardsQuery.isError || transfersLedger.query.isError || cardPaymentsLedger.query.isError,
     isLoading:
       walletsQuery.isLoading ||
       transactionsQuery.isLoading ||
-      creditCardsQuery.isLoading,
+      creditCardsQuery.isLoading || transfersLedger.query.isLoading || cardPaymentsLedger.query.isLoading,
     creditCardsQuery,
+    transfersLedger,
+    cardPaymentsLedger,
     paymentTypes: paymentTypeOptions,
     summaries,
     transactionsQuery,

@@ -7,19 +7,22 @@ UpdateTransactionInput,
 } from '../types/transaction.types'
 
 export async function getTransactions(): Promise<Transaction[]> {
-const {
-data,
-error,
-} = await supabase
-.from('transactions')
-.select('*')
-.order('transaction_date', { ascending: false })
-
-if (error) {
-throw error
-}
-
-return data
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Usuário não autenticado')
+  const pageSize = 500
+  const result: Transaction[] = []
+  for (let page = 0; page < 200; page++) {
+    const { data, error } = await supabase.from('transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('transaction_date', { ascending: false })
+      .order('id', { ascending: true })
+      .range(page * pageSize, (page + 1) * pageSize - 1)
+    if (error) throw error
+    result.push(...(data ?? []))
+    if ((data ?? []).length < pageSize) return result
+  }
+  throw new Error('Histórico muito grande para leitura completa; reduza o período ou consulte o suporte.')
 }
 
 export async function createTransaction(
