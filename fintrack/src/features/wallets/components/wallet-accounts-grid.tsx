@@ -34,7 +34,7 @@ export function WalletAccountsGrid({ wallets }: { wallets: WalletItem[] }) {
   return (
     <>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2 2xl:grid-cols-3">
         {wallets.map(wallet => (
           <article key={wallet.id} className="flex min-w-0 flex-col justify-between rounded-[22px] border border-border bg-card p-4 shadow-sm sm:p-5">
             <div>
@@ -47,7 +47,7 @@ export function WalletAccountsGrid({ wallets }: { wallets: WalletItem[] }) {
               </div>
               <div className="mt-6">
                 <p className="text-xs text-muted-foreground">{wallet.currentHint}</p>
-                <p className="mt-1 break-words text-[clamp(1.45rem,2vw,1.85rem)] font-semibold tracking-tight">
+                <p className="mt-1 break-words text-[clamp(1.3rem,2vw,1.85rem)] font-semibold tracking-tight">
                   {wallet.currentValue}
                 </p>
               </div>
