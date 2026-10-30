@@ -44,7 +44,7 @@ export function FiisPage(){
  {err&&<p role="alert" className="rounded-lg border border-destructive/30 p-3 text-sm text-destructive">{err}</p>}
  {(positions.isError||movements.isError)&&<p role="alert" className="text-sm text-destructive">Falha ao consultar FIIs. Confira o acesso ao Supabase.</p>}
  <div className="grid gap-3 md:grid-cols-3">
-  <Card><CardHeader><CardTitle className="text-sm">Valor de mercado informado</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{money(records.reduce((sum,p)=>sum+(fiiSummary(p,ops).marketValue??0),0))}</CardContent></Card>
+  <Card><CardHeader><CardTitle className="text-sm">Valor de mercado informado</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{records.some(p=>fiiSummary(p,ops).marketValue!==null)?money(records.reduce((sum,p)=>sum+(fiiSummary(p,ops).marketValue??0),0)):'Sem cotação'}</CardContent></Card>
   <Card><CardHeader><CardTitle className="text-sm">Total de cotas</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{records.reduce((sum,p)=>sum+fiiSummary(p,ops).quantity,0)}</CardContent></Card>
   <Card><CardHeader><CardTitle className="text-sm">Proventos registrados</CardTitle></CardHeader><CardContent className="text-2xl font-semibold">{money(ops.filter(x=>x.kind==='dividend').reduce((s,x)=>s+Number(x.amount),0))}</CardContent></Card>
  </div>
