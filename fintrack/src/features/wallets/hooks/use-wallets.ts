@@ -79,6 +79,7 @@ export function useWallets() {
       walletsQuery.data,
       transfersLedger.transfers,
       cardPaymentsLedger.payments,
+      investmentsQuery.data,
     ],
   )
 
