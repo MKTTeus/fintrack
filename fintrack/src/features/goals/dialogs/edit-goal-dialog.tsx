@@ -128,7 +128,7 @@ export function EditGoalDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-3xl border border-border bg-card p-6 sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] min-w-0 overflow-x-hidden overflow-y-auto rounded-2xl border border-border bg-card p-4 sm:max-w-2xl sm:rounded-3xl sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-xl">
             Editar meta
