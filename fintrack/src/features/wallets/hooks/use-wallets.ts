@@ -53,7 +53,6 @@ export function useWallets() {
           transfersLedger.transfers,
           cardPaymentsLedger.payments,
           investmentsQuery.data ?? [],
-        fiisQuery.data ?? [],
           fiisQuery.data ?? [],
         ),
       ),
