@@ -103,3 +103,15 @@ test('a second wallet never inherits an unrelated investment movement', () => {
   const investmentMovements = [{ wallet_id: 'a', kind: 'application', amount: 25 }]
   assert.equal(getAvailableWalletBalance(cashB as any, [], [], [], investmentMovements as any), 50)
 })
+
+test('FII initial holdings do not debit cash; purchases, sales and payouts do', () => {
+  const trades = [
+    { wallet_id: 'a', kind: 'buy', amount: 20 },
+    { wallet_id: 'a', kind: 'sell', amount: 9 },
+    { wallet_id: 'a', kind: 'dividend', amount: 0.12 },
+    { wallet_id: 'b', kind: 'buy', amount: 100 },
+  ]
+  assert.equal(getAvailableWalletBalance(cashA as any, [], [], [], [], trades as any), 89.12)
+  assert.equal(getAvailableWalletBalance(cashB as any, [], [], [], [], trades as any), -50)
+  assert.equal(getTotalAvailableBalance([cashA, cashB] as any, [], [], [], [], trades as any), 39.12)
+})
