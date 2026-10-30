@@ -141,12 +141,31 @@ export function InvestmentsPage() {
         </Card>)}
       </div>}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Histórico de operações</h2>
-        {!ledger.length ? <p className="text-sm text-muted-foreground">Nenhuma movimentação registrada.</p> :
-          <div className="overflow-hidden rounded-xl border border-border">{ledger.map(m => <div key={m.id} className="flex items-center justify-between gap-3 border-b border-border px-3 py-3 text-sm last:border-b-0 sm:px-4">
-            <div className="min-w-0"><p className="truncate font-medium">{operationTypes[m.kind]}</p><p className="truncate text-xs text-muted-foreground">{records.find(p => p.id === m.position_id)?.name ?? 'Investimento'} · {m.movement_date.split('-').reverse().join('/')}</p></div>
-            <span className="shrink-0 font-semibold tabular-nums">{formatCurrency(Number(m.amount))}</span>
-          </div>)}</div>}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold">Histórico de investimentos</h2>
+          <span className="text-xs text-muted-foreground">{ledger.length} {ledger.length === 1 ? 'operação registrada' : 'operações registradas'}</span>
+        </div>
+        {!ledger.length ? <Card><CardContent className="py-8 text-center text-sm text-muted-foreground">Quando você registrar uma aplicação, resgate ou rendimento, a movimentação aparecerá aqui.</CardContent></Card> :
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            {[...ledger].sort((a, b) => b.movement_date.localeCompare(a.movement_date) || b.created_at.localeCompare(a.created_at)).map(m => (
+              <div key={m.id} className="flex min-w-0 items-center justify-between gap-3 border-b border-border px-3 py-3 last:border-b-0 sm:px-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
+                    {m.kind === 'application' ? <ArrowUpFromLine className="size-4" /> : m.kind === 'redemption' ? <ArrowDownToLine className="size-4" /> : <TrendingUp className="size-4" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{operationTypes[m.kind]}</p>
+                    <p className="truncate text-xs text-muted-foreground">{records.find(p => p.id === m.position_id)?.name ?? 'Investimento'} · {m.movement_date.split('-').reverse().join('/')}</p>
+                    {m.notes && <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground" title={m.notes}>{m.notes}</p>}
+                  </div>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-sm font-semibold tabular-nums">{m.kind === 'redemption' ? '−' : '+'}{formatCurrency(Number(m.amount))}</p>
+                  <p className="text-[11px] text-muted-foreground">{m.kind === 'application' ? 'Da carteira para investimento' : m.kind === 'redemption' ? 'Do investimento para carteira' : 'Rendimento reinvestido'}</p>
+                </div>
+              </div>
+            ))}
+          </div>}
       </section>
     </div>
     {editingPosition && <InvestmentEditDialog key={editingPosition.id} position={editingPosition} onClose={() => setEditingPosition(null)} />}
