@@ -1,15 +1,16 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowDownToLine, ArrowUpFromLine, Landmark, Plus, TrendingUp } from 'lucide-react'
+import { ArrowDownToLine, ArrowUpFromLine, Landmark, Pencil, Plus, TrendingUp } from 'lucide-react'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useWallets } from '@/features/wallets/hooks/use-wallets'
 import { formatCurrency } from '@/utils/transaction-formatters'
 import { createInvestment, createInvestmentMovement, investmentBalance, listInvestmentMovements, listInvestments, type InvestmentPosition } from '@/features/investments/investment.service'
+import { InvestmentEditDialog } from '@/features/investments/investment-edit-dialog'
 import { queryKeys } from '@/lib/query-keys'
 
 const investmentTypes = { cdb: 'CDB', rdb: 'RDB / Caixinha', fixed_income_other: 'Outros de renda fixa' }
@@ -35,6 +36,7 @@ export function InvestmentsPage() {
   const redeemed = ledger.filter(m => m.kind === 'redemption').reduce((s, m) => s + Number(m.amount), 0)
   const yields = ledger.filter(m => m.kind === 'yield').reduce((s, m) => s + Number(m.amount), 0)
   const [createOpen, setCreateOpen] = useState(false)
+  const [editingPosition, setEditingPosition] = useState<InvestmentPosition | null>(null)
   const [operationOpen, setOperationOpen] = useState(false)
   const [name, setName] = useState('')
   const [institution, setInstitution] = useState('')
@@ -121,8 +123,16 @@ export function InvestmentsPage() {
       {positions.isError || movements.isError ? <p role="alert" className="text-sm text-destructive">Erro ao consultar investimentos. Verifique a conexão com o banco.</p> : null}
       {positions.isPending || movements.isPending ? <div className="h-40 animate-pulse rounded-xl bg-muted"/> : records.length === 0 ? <Card><CardContent className="py-10 text-center"><Landmark className="mx-auto mb-3 size-9 text-muted-foreground"/><p className="font-semibold">Nenhum investimento cadastrado</p><p className="mt-1 text-sm text-muted-foreground">Comece criando seu CDB ou RDB. Nenhum lançamento anterior será alterado.</p></CardContent></Card> :
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {records.map(p => <Card key={p.id}>
-          <CardHeader><CardTitle>{p.name}</CardTitle><p className="text-xs text-muted-foreground">{investmentTypes[p.kind]} · {p.institution || 'Instituição não informada'}</p></CardHeader>
+        {records.map(p => <Card key={p.id} className="min-w-0">
+          <CardHeader>
+            <CardTitle className="min-w-0 break-words pr-1">{p.name}</CardTitle>
+            <p className="min-w-0 break-words text-xs text-muted-foreground">{investmentTypes[p.kind]} · {p.institution || 'Instituição não informada'}</p>
+            <CardAction>
+              <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-xl" onClick={() => setEditingPosition(p)} aria-label={`Editar investimento ${p.name}`}>
+                <Pencil className="size-3.5" /> Editar
+              </Button>
+            </CardAction>
+          </CardHeader>
           <CardContent className="space-y-3">
             <div><p className="text-xs text-muted-foreground">Saldo registrado</p><p className="text-2xl font-semibold tabular-nums">{formatCurrency(investmentBalance(p.id, ledger))}</p></div>
             <Button className="w-full" variant="outline" onClick={() => openOperation(p)}>Registrar movimentação</Button>
@@ -138,6 +148,7 @@ export function InvestmentsPage() {
           </div>)}</div>}
       </section>
     </div>
+    {editingPosition && <InvestmentEditDialog key={editingPosition.id} position={editingPosition} onClose={() => setEditingPosition(null)} />}
     <Dialog open={createOpen} onOpenChange={setCreateOpen}><DialogContent><DialogHeader><DialogTitle>Novo investimento</DialogTitle><DialogDescription>Cadastre um CDB, RDB ou outro produto de renda fixa. Você poderá registrar aplicações depois.</DialogDescription></DialogHeader>
       <form onSubmit={submitPosition} className="space-y-4">
         <label className="block space-y-1 text-sm">Nome<Input required minLength={2} maxLength={100} value={name} onChange={e => setName(e.target.value)} placeholder="Ex.: RDB Nubank" /></label>
