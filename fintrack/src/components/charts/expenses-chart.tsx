@@ -22,7 +22,7 @@ export function ExpensesChart() {
     return (
       <div
         className="
-          h-[320px]
+          h-[260px] sm:h-[300px] lg:h-[320px]
           animate-pulse
           rounded-3xl
           bg-card
@@ -42,7 +42,7 @@ export function ExpensesChart() {
         title="Receitas vs Despesas"
         description="Comparação financeira dos últimos meses"
       >
-        <div className="h-[320px] w-full">
+        <div className="h-[260px] w-full min-w-0 sm:h-[300px] lg:h-[320px]">
           <ChartsEmptyState
             title="Gráfico de Receitas e Despesas"
             description="Seus dados aparecerão aqui conforme você criar transações"
@@ -57,12 +57,12 @@ export function ExpensesChart() {
       title="Receitas vs Despesas"
       description="Comparação financeira dos últimos meses"
     >
-      <div className="h-[320px] w-full">
+      <div className="h-[260px] sm:h-[300px] lg:h-[320px] w-full">
         <ResponsiveContainer
           width="100%"
           height="100%"
         >
-          <LineChart data={data}>
+          <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid
               strokeDasharray="3 3"
               opacity={0.15}
@@ -74,6 +74,7 @@ export function ExpensesChart() {
               fontSize={12}
               tickLine={false}
               axisLine={false}
+              minTickGap={12}
             />
 
             <YAxis
@@ -81,9 +82,12 @@ export function ExpensesChart() {
               fontSize={12}
               tickLine={false}
               axisLine={false}
+              width={55}
+              tickFormatter={(value: number) => new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(value)}
             />
 
             <Tooltip
+              formatter={(value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value))}
               contentStyle={{
                 background: 'var(--card)',
                 border:
