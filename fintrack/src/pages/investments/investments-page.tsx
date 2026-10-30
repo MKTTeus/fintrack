@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowDownToLine, ArrowUpFromLine, Landmark, Plus, TrendingUp } from 'lucide-react'
 import { AppLayout } from '@/components/layout/app-layout'
@@ -57,7 +57,7 @@ export function InvestmentsPage() {
   }
   const addPosition = useMutation({ mutationFn: createInvestment, onSuccess: refresh })
   const addMovement = useMutation({ mutationFn: createInvestmentMovement, onSuccess: refresh })
-  async function submitPosition(e: React.FormEvent) {
+  async function submitPosition(e: FormEvent) {
     e.preventDefault()
     setError('')
     try {
@@ -67,7 +67,7 @@ export function InvestmentsPage() {
       setInstitution('')
     } catch (e) { setError(e instanceof Error ? e.message : 'Falha ao cadastrar investimento.') }
   }
-  async function submitMovement(e: React.FormEvent) {
+  async function submitMovement(e: FormEvent) {
     e.preventDefault()
     setError('')
     const value = Number(amount.replace(',', '.'))
