@@ -120,7 +120,7 @@ export function AddWalletDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] min-w-0 overflow-x-hidden overflow-y-auto rounded-2xl p-4 sm:max-w-2xl sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-xl">
             Adicionar forma de pagamento
@@ -135,7 +135,7 @@ export function AddWalletDialog({
             className="grid gap-4"
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid min-w-0 gap-3 min-[440px]:grid-cols-2">
               {paymentTypes.map((paymentType) => {
                 const Icon = paymentType.icon
                 const isSelected =
