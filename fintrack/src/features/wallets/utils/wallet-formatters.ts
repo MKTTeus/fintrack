@@ -102,12 +102,15 @@ interface WalletStats {
 function getMonthBounds(referenceDate = new Date()) {
   const year = referenceDate.getFullYear()
   const month = referenceDate.getMonth()
-  const start = new Date(year, month, 1)
-  const end = new Date(year, month + 1, 1)
+  const localDate = (date: Date) => [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-')
 
   return {
-    end: end.toISOString().slice(0, 10),
-    start: start.toISOString().slice(0, 10),
+    end: localDate(new Date(year, month + 1, 1)),
+    start: localDate(new Date(year, month, 1)),
   }
 }
 
@@ -115,7 +118,7 @@ function getLast30DaysStart(referenceDate = new Date()) {
   const start = new Date(referenceDate)
   start.setDate(start.getDate() - 30)
 
-  return start.toISOString().slice(0, 10)
+  return [start.getFullYear(), String(start.getMonth() + 1).padStart(2, '0'), String(start.getDate()).padStart(2, '0')].join('-')
 }
 
 function isCurrentMonthTransaction(transaction: Transaction) {
