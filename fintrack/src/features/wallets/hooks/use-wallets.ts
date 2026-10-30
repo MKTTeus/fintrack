@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { queryKeys } from '@/lib/query-keys'
 import { useAuth } from '@/providers/auth-context'
+import { listInvestmentMovements } from '@/features/investments/investment.service'
 import { useTransactions } from '@/features/transactions/hooks/use-transactions'
 
 import { paymentTypeOptions } from '../constants/wallet-options'
@@ -25,6 +26,11 @@ import { useCreditCardPayments } from './use-credit-card-payments'
 export function useWallets() {
   const { loading, user } = useAuth()
   const transactionsQuery = useTransactions()
+  const investmentsQuery = useQuery({
+    queryKey: queryKeys.investments.movements,
+    queryFn: listInvestmentMovements,
+    enabled: !loading && !!user,
+  })
   const creditCardsQuery = useCreditCards()
   const transfersLedger = useWalletTransfers()
   const cardPaymentsLedger = useCreditCardPayments()
@@ -44,6 +50,7 @@ export function useWallets() {
           creditCardsQuery.data ?? [],
           transfersLedger.transfers,
           cardPaymentsLedger.payments,
+          investmentsQuery.data ?? [],
         ),
       ),
     [
@@ -52,6 +59,7 @@ export function useWallets() {
       walletsQuery.data,
       transfersLedger.transfers,
       cardPaymentsLedger.payments,
+      investmentsQuery.data,
     ],
   )
 
@@ -63,6 +71,7 @@ export function useWallets() {
         creditCardsQuery.data ?? [],
         transfersLedger.transfers,
         cardPaymentsLedger.payments,
+        investmentsQuery.data ?? [],
       ),
     [
       creditCardsQuery.data,
@@ -81,19 +90,20 @@ export function useWallets() {
         transfersLedger.transfers,
         cardPaymentsLedger.payments,
         creditCardsQuery.data ?? [],
+        investmentsQuery.data ?? [],
       ),
-    [transactionsQuery.data, walletsQuery.data, transfersLedger.transfers, cardPaymentsLedger.payments, creditCardsQuery.data],
+    [transactionsQuery.data, walletsQuery.data, transfersLedger.transfers, cardPaymentsLedger.payments, creditCardsQuery.data, investmentsQuery.data],
   )
 
   return {
     isError:
       walletsQuery.isError ||
       transactionsQuery.isError ||
-      creditCardsQuery.isError || transfersLedger.query.isError || cardPaymentsLedger.query.isError,
+      creditCardsQuery.isError || investmentsQuery.isError || transfersLedger.query.isError || cardPaymentsLedger.query.isError,
     isLoading:
       walletsQuery.isLoading ||
       transactionsQuery.isLoading ||
-      creditCardsQuery.isLoading || transfersLedger.query.isLoading || cardPaymentsLedger.query.isLoading,
+      creditCardsQuery.isLoading || investmentsQuery.isLoading || transfersLedger.query.isLoading || cardPaymentsLedger.query.isLoading,
     creditCardsQuery,
     transfersLedger,
     cardPaymentsLedger,
