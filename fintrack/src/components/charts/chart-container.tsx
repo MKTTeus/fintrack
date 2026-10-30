@@ -14,18 +14,20 @@ export function ChartContainer({
   return (
     <section
       className="
-        rounded-3xl
+        min-w-0
+        overflow-hidden
+        rounded-2xl
         border
         border-border
         bg-card
-        p-6
+        p-4 sm:p-6
       "
     >
-      <div className="mb-8">
+      <div className="mb-4 min-w-0 sm:mb-6">
         <h2
           className="
-            text-xl
-            font-medium
+            text-lg sm:text-xl
+            font-semibold
             tracking-tight
           "
         >
@@ -35,7 +37,8 @@ export function ChartContainer({
         <p
           className="
             mt-1
-            text-sm
+            text-xs sm:text-sm
+            leading-relaxed
             text-muted-foreground
           "
         >
