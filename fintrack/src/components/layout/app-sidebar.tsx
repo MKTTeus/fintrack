@@ -21,12 +21,14 @@ export function AppSidebar() {
         top-0
         flex
         h-screen
-        w-[280px]
+        w-[252px]
+        shrink-0
+        xl:w-[272px]
         flex-col
         border-r
         border-border
         bg-card
-        px-6
+        px-4 xl:px-6
         py-6
       "
     >
@@ -106,13 +108,14 @@ export function AppSidebar() {
         "
       >
         <div>
-          <p className="text-sm font-medium">
+          <p className="truncate text-sm font-medium">
             {displayName}
           </p>
  
           <p
             className="
               mt-1
+              break-all
               text-xs
               text-muted-foreground
             "
