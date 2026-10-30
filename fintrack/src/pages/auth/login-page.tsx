@@ -71,7 +71,7 @@ function LoginPreview() {
         className="pointer-events-none absolute -bottom-40 -left-28 size-[370px] rounded-full bg-[#b9d5ff]/45 blur-[60px]"
       />
 
-      <div className="relative m-auto w-full max-w-[480px] px-7 py-8 xl:px-9">
+      <div className="relative m-auto w-full max-w-[480px] px-6 py-6 xl:px-9">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#d3e2fb] bg-white/70 px-3 py-1.5 text-[11px] font-semibold text-[#3d65af]">
           <span className="size-1.5 rounded-full bg-[#2463f3]" />
           Organize com simplicidade
@@ -86,7 +86,7 @@ function LoginPreview() {
           Receitas, despesas e objetivos em uma visão simples para acompanhar o que importa.
         </p>
 
-        <div className="mt-7 overflow-hidden rounded-[20px] border border-[#e1eafa] bg-white p-5 shadow-[0_20px_45px_-26px_rgba(50,96,161,0.32)]">
+        <div className="mt-5 overflow-hidden rounded-[20px] border border-[#e1eafa] bg-white p-5 shadow-[0_20px_45px_-26px_rgba(50,96,161,0.32)]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[13px] font-semibold text-[#273c5e]">Visão financeira</p>
@@ -184,9 +184,9 @@ export function LoginPage() {
   }
 
   return (
-    <main className="min-h-[100dvh] bg-white font-sans text-[#1d2c48] lg:flex lg:items-center lg:justify-center lg:bg-[#f5f8fd] lg:p-6">
-      <div className="mx-auto grid min-h-[100dvh] w-full max-w-[1160px] grid-cols-1 lg:min-h-[630px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-3">
-        <section className="flex min-h-[100dvh] min-w-0 flex-col bg-white px-5 sm:px-9 lg:min-h-0 lg:rounded-[22px] lg:border lg:border-[#e9edf6] lg:px-9 xl:px-[52px]">
+    <main className="min-h-[100dvh] min-w-0 bg-white font-sans text-[#1d2c48] lg:flex lg:items-center lg:justify-center lg:bg-[#f5f8fd] lg:p-4 xl:p-6">
+      <div className="mx-auto grid min-h-[100dvh] min-w-0 w-full max-w-[1100px] grid-cols-1 lg:min-h-[590px] lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-4">
+        <section className="flex min-h-[100dvh] min-w-0 flex-col bg-white px-4 sm:px-9 lg:min-h-0 lg:rounded-[22px] lg:border lg:border-[#e9edf6] lg:px-9 xl:px-[52px]">
           <header className="flex items-center justify-between gap-3 pb-5 pt-6 sm:pt-8 lg:pb-4">
             <FinTrackBrand />
             <div className="hidden items-center gap-1.5 rounded-full border border-[#e8edf7] bg-[#f7faff] px-2.5 py-1.5 text-[10px] font-medium text-[#798ca8] sm:inline-flex">
@@ -195,7 +195,7 @@ export function LoginPage() {
             </div>
           </header>
 
-          <div className="flex flex-1 items-center justify-center py-7 sm:py-9 lg:py-5">
+          <div className="flex flex-1 items-center justify-center py-6 sm:py-9 lg:py-4">
             <div className="w-full max-w-[375px]">
               <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#3473e9]">
                 Sua área financeira
