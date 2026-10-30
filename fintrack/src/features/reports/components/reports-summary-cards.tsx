@@ -43,14 +43,14 @@ function ReportsSummaryCard({
   const styles = summaryToneStyles[tone]
 
   return (
-    <article className="rounded-3xl border border-border bg-card p-5">
-      <div className="flex items-start justify-between gap-4">
+    <article className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-5">
+      <div className="flex min-w-0 items-start justify-between gap-2 sm:gap-4">
         <div className="min-w-0">
           <p className="text-sm text-muted-foreground">
             {title}
           </p>
           <h3
-            className={`mt-2 truncate text-2xl font-medium tracking-tight ${styles.value}`}
+            className={`mt-2 break-words text-[clamp(1.25rem,2vw,1.75rem)] font-semibold tracking-tight ${styles.value}`}
           >
             {value}
           </h3>
@@ -62,7 +62,7 @@ function ReportsSummaryCard({
         </div>
 
         <div
-          className={`flex size-11 shrink-0 items-center justify-center rounded-2xl ${styles.icon}`}
+          className={`flex size-10 shrink-0 sm:size-11 items-center justify-center rounded-2xl ${styles.icon}`}
         >
           <Icon className="size-5" />
         </div>
@@ -78,7 +78,7 @@ interface ReportsSummaryCardsProps {
 
 function ReportsSummarySkeleton() {
   return (
-    <article className="rounded-3xl border border-border bg-card p-5">
+    <article className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="h-4 w-20 animate-pulse rounded bg-muted" />
@@ -96,7 +96,7 @@ export function ReportsSummaryCards({
   summaries,
 }: ReportsSummaryCardsProps) {
   return (
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+    <section className="grid grid-cols-1 gap-3 min-[440px]:grid-cols-2 2xl:grid-cols-4">
       {isLoading
         ? Array.from({ length: 4 }).map((_, index) => (
             <ReportsSummarySkeleton key={index} />
