@@ -28,6 +28,12 @@ const pageData: Record<string, PageData> = {
     description: 'Visualize suas contas e saldos',
   },
 
+  '/investments': {
+    icon: navItems.find((item) => item.href === '/investments')?.icon,
+    title: 'Investimentos',
+    description: 'Acompanhe aplicações, resgates e rendimentos registrados',
+  },
+
   '/goals': {
     icon: navItems.find((item) => item.href === '/goals')?.icon,
     title: 'Metas',
