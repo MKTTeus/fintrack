@@ -11,6 +11,7 @@ import { useWallets } from '@/features/wallets/hooks/use-wallets'
 import { formatCurrency } from '@/utils/transaction-formatters'
 import { createInvestment, createInvestmentMovement, investmentBalance, listInvestmentMovements, listInvestments, type InvestmentPosition } from '@/features/investments/investment.service'
 import { InvestmentEditDialog } from '@/features/investments/investment-edit-dialog'
+import { InvestmentOpeningDialog } from '@/features/investments/investment-opening-dialog'
 import { queryKeys } from '@/lib/query-keys'
 
 const investmentTypes = { cdb: 'CDB', rdb: 'RDB / Caixinha', fixed_income_other: 'Outros de renda fixa' }
@@ -31,12 +32,13 @@ export function InvestmentsPage() {
   const movements = useQuery({ queryKey: ['investments', 'movements'], queryFn: listInvestmentMovements })
   const records = positions.data ?? []
   const ledger = movements.data ?? []
-  const total = useMemo(() => records.reduce((s, p) => s + investmentBalance(p.id, ledger), 0), [records, ledger])
+  const total = useMemo(() => records.reduce((s, p) => s + investmentBalance(p.id, ledger, p.opening_balance), 0), [records, ledger])
   const applied = ledger.filter(m => m.kind === 'application').reduce((s, m) => s + Number(m.amount), 0)
   const redeemed = ledger.filter(m => m.kind === 'redemption').reduce((s, m) => s + Number(m.amount), 0)
   const yields = ledger.filter(m => m.kind === 'yield').reduce((s, m) => s + Number(m.amount), 0)
   const [createOpen, setCreateOpen] = useState(false)
   const [editingPosition, setEditingPosition] = useState<InvestmentPosition | null>(null)
+  const [openingPosition, setOpeningPosition] = useState<InvestmentPosition | null>(null)
   const [operationOpen, setOperationOpen] = useState(false)
   const [name, setName] = useState('')
   const [institution, setInstitution] = useState('')
@@ -79,7 +81,7 @@ export function InvestmentsPage() {
     }
     const p = records.find(r => r.id === positionId)
     if (!p || !walletId) { setError('Escolha investimento e carteira.') ; return }
-    if (operation === 'redemption' && value > investmentBalance(positionId, ledger) + 0.001) {
+    if (operation === 'redemption' && value > investmentBalance(positionId, ledger, records.find(p => p.id === positionId)?.opening_balance ?? 0) + 0.001) {
       setError('O resgate não pode exceder o saldo registrado nesse investimento.')
       return
     }
@@ -119,7 +121,7 @@ export function InvestmentsPage() {
           { label: 'Rendimentos registrados', value: yields, icon: TrendingUp },
         ].map(s => <Card key={s.label}><CardHeader><CardTitle className="text-xs text-muted-foreground">{s.label}</CardTitle></CardHeader><CardContent><s.icon className="mb-2 size-5 text-primary"/><p className="text-xl font-semibold tabular-nums sm:text-2xl">{formatCurrency(s.value)}</p></CardContent></Card>)}
       </div>
-      <p className="text-xs text-muted-foreground">Valores registrados manualmente; não são cotações bancárias ao vivo. Aplicação e resgate afetam o saldo estimado da carteira de origem/destino. Rendimento creditado aumenta apenas a posição investida.</p>
+      <p className="text-xs text-muted-foreground">Valores registrados, não cotações bancárias ao vivo. O saldo inicial é apenas um patrimônio anterior, sem alterar a carteira. Aplicação e resgate afetam o saldo estimado da carteira de origem/destino. Rendimento creditado aumenta apenas a posição investida.</p>
       {positions.isError || movements.isError ? <p role="alert" className="text-sm text-destructive">Erro ao consultar investimentos. Verifique a conexão com o banco.</p> : null}
       {positions.isPending || movements.isPending ? <div className="h-40 animate-pulse rounded-xl bg-muted"/> : records.length === 0 ? <Card><CardContent className="py-10 text-center"><Landmark className="mx-auto mb-3 size-9 text-muted-foreground"/><p className="font-semibold">Nenhum investimento cadastrado</p><p className="mt-1 text-sm text-muted-foreground">Comece criando seu CDB ou RDB. Nenhum lançamento anterior será alterado.</p></CardContent></Card> :
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -136,6 +138,11 @@ export function InvestmentsPage() {
           <CardContent className="space-y-3">
             <div><p className="text-xs text-muted-foreground">Saldo registrado</p><p className="break-words text-2xl font-semibold tabular-nums">{formatCurrency(investmentBalance(p.id, ledger))}</p></div>
             {p.notes && <p className="line-clamp-2 break-words text-xs leading-relaxed text-muted-foreground" title={p.notes}>{p.notes}</p>}
+            {p.opening_date ? <p className="text-xs text-muted-foreground">
+              Saldo anterior: {formatCurrency(Number(p.opening_balance))} · até {p.opening_date.split('-').reverse().join('/')}
+            </p> : Number(p.opening_balance) === 0 ? <Button className="w-full" variant="secondary" onClick={() => setOpeningPosition(p)}>
+              Informar saldo inicial
+            </Button> : null}
             <Button className="w-full" variant="outline" onClick={() => openOperation(p)}>Registrar movimentação</Button>
           </CardContent>
         </Card>)}
@@ -169,6 +176,7 @@ export function InvestmentsPage() {
       </section>
     </div>
     {editingPosition && <InvestmentEditDialog key={editingPosition.id} position={editingPosition} onClose={() => setEditingPosition(null)} />}
+    {openingPosition && <InvestmentOpeningDialog key={openingPosition.id} position={openingPosition} onClose={() => setOpeningPosition(null)} />}
     <Dialog open={createOpen} onOpenChange={setCreateOpen}><DialogContent><DialogHeader><DialogTitle>Novo investimento</DialogTitle><DialogDescription>Cadastre um CDB, RDB ou outro produto de renda fixa. Você poderá registrar aplicações depois.</DialogDescription></DialogHeader>
       <form onSubmit={submitPosition} className="space-y-4">
         <label className="block space-y-1 text-sm">Nome<Input required minLength={2} maxLength={100} value={name} onChange={e => setName(e.target.value)} placeholder="Ex.: RDB Nubank" /></label>
