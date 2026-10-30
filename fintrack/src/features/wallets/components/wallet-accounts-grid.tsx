@@ -5,6 +5,7 @@ import type { WalletItem } from '../types/wallet.types'
 import { WalletIcon } from './wallet-icon'
 import { WalletEditDialog } from './wallet-edit-dialog'
 import { CreditCardPaymentDialog } from './credit-card-payment-dialog'
+import { WalletReconciliationDialog } from './wallet-reconciliation-dialog'
 import { useUpdateWallet } from '../hooks/use-update-wallet'
 
 export function WalletAccountsGrid({ wallets }: { wallets: WalletItem[] }) {
@@ -65,6 +66,7 @@ export function WalletAccountsGrid({ wallets }: { wallets: WalletItem[] }) {
               <Button variant="outline" className="h-9 gap-1.5 rounded-xl" onClick={() => setEditing(wallet)}>
                 <Pencil className="size-3.5" /> Editar
               </Button>
+              {wallet.type !== 'credit_card' && <WalletReconciliationDialog wallet={wallet} />}
               {wallet.type === 'credit_card' && (
                 <CreditCardPaymentDialog cardWallet={wallet} wallets={wallets} />
               )}
