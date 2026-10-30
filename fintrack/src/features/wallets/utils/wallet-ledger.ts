@@ -48,9 +48,9 @@ export function getTotalAvailableBalance(
   investments: InvestmentMovement[] = [],
   fiis: FiiMovement[] = [],
 ): number {
-  return wallets.filter(wallet => wallet.is_active && wallet.type !== 'credit_card')
+  const total = wallets.filter(wallet => wallet.is_active && wallet.type !== 'credit_card')
     .reduce((sum, wallet) => sum + getAvailableWalletBalance(wallet, transactions, transfers, payments, investments, fiis), 0)
-    .toFixed(2) * 1
+  return Math.round(total * 100) / 100
 }
 
 export function getCardOutstanding(
