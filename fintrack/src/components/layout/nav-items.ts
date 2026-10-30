@@ -3,6 +3,7 @@ import {
   BarChart3,
   LayoutDashboard,
   Landmark,
+  Building2,
   Settings,
   Target,
   Wallet,
@@ -33,6 +34,11 @@ export const navItems: {
     icon: Landmark,
     label: 'Investimentos',
     href: '/investments',
+  },
+  {
+    icon: Building2,
+    label: 'FIIs',
+    href: '/fiis',
   },
   {
     icon: Target,
