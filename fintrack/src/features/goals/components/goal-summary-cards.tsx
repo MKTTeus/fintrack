@@ -10,7 +10,7 @@ export function GoalSummaryCards({
   summaries,
 }: GoalSummaryCardsProps) {
   return (
-    <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
       {summaries.map((summary) => (
         <GoalSummaryCard
           key={summary.title}
