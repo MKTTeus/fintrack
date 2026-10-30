@@ -51,7 +51,7 @@ function TransactionCard({ transaction }: { transaction: Transaction }) {
         <p
           className={`
             flex-shrink-0
-            max-w-[40%]
+            max-w-[48%] break-words
             text-right
             text-base
             font-semibold
@@ -98,9 +98,9 @@ export function TransactionTable() {
   }
 
   return (
-    <section className="rounded-3xl border border-border bg-card p-4 lg:p-6">
-      <div className="hidden lg:block overflow-hidden rounded-xl">
-        <Table className="w-full">
+    <section className="min-w-0 rounded-2xl border border-border bg-card p-3 sm:p-4 lg:p-6">
+      <div className="hidden min-w-0 overflow-x-auto rounded-xl xl:block">
+        <Table className="min-w-[760px] w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -133,7 +133,7 @@ export function TransactionTable() {
         </Table>
       </div>
 
-      <div className="space-y-3 lg:hidden">
+      <div className="space-y-3 xl:hidden">
         {data.map((transaction) => (
           <TransactionCard
             key={transaction.id}
