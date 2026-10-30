@@ -134,7 +134,8 @@ export function InvestmentsPage() {
             </CardAction>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div><p className="text-xs text-muted-foreground">Saldo registrado</p><p className="text-2xl font-semibold tabular-nums">{formatCurrency(investmentBalance(p.id, ledger))}</p></div>
+            <div><p className="text-xs text-muted-foreground">Saldo registrado</p><p className="break-words text-2xl font-semibold tabular-nums">{formatCurrency(investmentBalance(p.id, ledger))}</p></div>
+            {p.notes && <p className="line-clamp-2 break-words text-xs leading-relaxed text-muted-foreground" title={p.notes}>{p.notes}</p>}
             <Button className="w-full" variant="outline" onClick={() => openOperation(p)}>Registrar movimentação</Button>
           </CardContent>
         </Card>)}
