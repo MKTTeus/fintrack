@@ -6,6 +6,7 @@ type Transaction = Database['public']['Tables']['transactions']['Row']
 type CashTransaction = Pick<Transaction, 'wallet_id' | 'type' | 'amount'>
 type Transfer = Database['public']['Tables']['wallet_transfers']['Row']
 type CardPayment = Database['public']['Tables']['credit_card_payments']['Row']
+type InvestmentMovement = Database['public']['Tables']['investment_movements']['Row']
 
 /**
  * Financial basis: wallets.current_balance represents the INITIAL balance.
@@ -17,6 +18,7 @@ export function getAvailableWalletBalance(
   transactions: CashTransaction[],
   transfers: Transfer[] = [],
   cardPayments: CardPayment[] = [],
+  investments: InvestmentMovement[] = [],
 ): number {
   if (wallet.type === 'credit_card') return 0
   const booked = transactions.reduce((sum, tx) =>
@@ -27,7 +29,12 @@ export function getAvailableWalletBalance(
       - (transfer.source_wallet_id === wallet.id ? Number(transfer.amount) : 0), 0)
   const settlements = cardPayments.reduce((sum, payment) =>
     sum + (payment.source_wallet_id === wallet.id ? Number(payment.amount) : 0), 0)
-  return Number(wallet.current_balance) + booked + internal - settlements
+  const invested = investments.reduce((sum, movement) =>
+    sum + (movement.wallet_id === wallet.id
+      ? movement.kind === 'application' ? -Number(movement.amount)
+        : movement.kind === 'redemption' ? Number(movement.amount) : 0
+      : 0), 0)
+  return Number(wallet.current_balance) + booked + internal - settlements + invested
 }
 
 export function getTotalAvailableBalance(
@@ -35,9 +42,10 @@ export function getTotalAvailableBalance(
   transactions: CashTransaction[],
   transfers: Transfer[] = [],
   payments: CardPayment[] = [],
+  investments: InvestmentMovement[] = [],
 ): number {
   return wallets.filter(wallet => wallet.is_active && wallet.type !== 'credit_card')
-    .reduce((sum, wallet) => sum + getAvailableWalletBalance(wallet, transactions, transfers, payments), 0)
+    .reduce((sum, wallet) => sum + getAvailableWalletBalance(wallet, transactions, transfers, payments, investments), 0)
 }
 
 export function getCardOutstanding(
