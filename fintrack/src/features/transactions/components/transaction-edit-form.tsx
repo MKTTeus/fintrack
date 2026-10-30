@@ -234,7 +234,7 @@ export function TransactionEditForm({
           />
         </div>
 
-        <div className="flex gap-2 justify-end pt-2">
+        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
           <Button
             type="button"
             variant="outline"
