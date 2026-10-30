@@ -4,6 +4,7 @@ import type { Database } from '@/types/database.types'
 export type InvestmentPosition = Database['public']['Tables']['investment_positions']['Row']
 export type InvestmentMovement = Database['public']['Tables']['investment_movements']['Row']
 export type NewInvestment = Pick<InvestmentPosition, 'name' | 'kind' | 'institution' | 'notes'>
+export type UpdateInvestment = NewInvestment
 export type NewMovement = Pick<InvestmentMovement, 'position_id' | 'wallet_id' | 'kind' | 'amount' | 'movement_date' | 'notes'>
 
 async function currentUser() {
@@ -36,6 +37,32 @@ export async function createInvestment(input: NewInvestment): Promise<Investment
   if (error) throw error
   return data
 }
+export async function updateInvestment(id: string, input: UpdateInvestment): Promise<InvestmentPosition> {
+  const user = await currentUser()
+  const name = input.name.trim()
+  const institution = input.institution?.trim() || null
+  const notes = input.notes?.trim() || null
+  const allowedKinds: InvestmentPosition['kind'][] = ['cdb', 'rdb', 'fixed_income_other']
+
+  if (!id) throw new Error('Investimento não encontrado.')
+  if (name.length < 2 || name.length > 100) {
+    throw new Error('Informe o nome do investimento (2 a 100 caracteres).')
+  }
+  if (!allowedKinds.includes(input.kind)) throw new Error('Selecione um tipo de investimento válido.')
+  if (institution && institution.length > 100) throw new Error('A instituição deve ter até 100 caracteres.')
+  if (notes && notes.length > 500) throw new Error('A observação deve ter até 500 caracteres.')
+
+  const { data, error } = await supabase
+    .from('investment_positions')
+    .update({ name, kind: input.kind, institution, notes })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select('*')
+    .single()
+  if (error) throw error
+  return data
+}
+
 export async function createInvestmentMovement(input: NewMovement): Promise<InvestmentMovement> {
   const user = await currentUser()
   if (!Number.isFinite(input.amount) || input.amount <= 0 || Math.round(input.amount * 100) !== input.amount * 100) throw new Error('Valor inválido: informe reais e centavos.')
