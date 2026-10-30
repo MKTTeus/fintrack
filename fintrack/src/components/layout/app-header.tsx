@@ -91,32 +91,32 @@ export function AppHeader() {
         top-0
         z-30
         flex
-        h-[72px]
+        min-h-[72px]
         items-center
         justify-between
         border-b
         border-border
         bg-background/90
-        px-4
+        px-3
         backdrop-blur-xl
         transition-all
         duration-200
-        sm:h-[80px]
-        sm:px-8
+        sm:min-h-[80px]
+        sm:px-6
       "
     >
       {/* Left */}
-      <div>
+      <div className="min-w-0 flex-1 py-3 pr-3">
         <h2
           className="
-            text-2xl
-            font-medium
+            text-lg sm:text-2xl
+            font-semibold
             tracking-tight
           "
         >
           {Icon ? (
-            <span className="inline-flex items-center gap-2">
-              <Icon className="size-5" />
+            <span className="inline-flex min-w-0 items-center gap-2">
+              <Icon className="size-5 shrink-0" />
               {title}
             </span>
           ) : (
@@ -127,7 +127,7 @@ export function AppHeader() {
         <p
           className="
             mt-1
-            text-sm
+            text-xs sm:text-sm
             text-muted-foreground
           "
         >
@@ -136,13 +136,15 @@ export function AppHeader() {
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <NavLink
           to="/settings"
           className="
             inline-flex
-            h-11
-            w-11
+            h-9
+            w-9
+            sm:h-11
+            sm:w-11
             items-center
             justify-center
             rounded-full
@@ -163,7 +165,7 @@ export function AppHeader() {
         <div
           className="
             flex
-            size-11
+            size-9 sm:size-11
             items-center
             justify-center
             rounded-full
