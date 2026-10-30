@@ -28,7 +28,7 @@ export function GoalsPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-8">
+      <div className="flex min-w-0 flex-col gap-6 lg:gap-8">
 
         <GoalSummaryCards summaries={summaries} />
 
