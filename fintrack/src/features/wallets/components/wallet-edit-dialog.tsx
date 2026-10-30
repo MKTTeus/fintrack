@@ -158,7 +158,7 @@ export function WalletEditDialog({
       open={Boolean(wallet)}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] min-w-0 overflow-x-hidden overflow-y-auto rounded-2xl p-4 sm:max-w-2xl sm:p-6">
         {wallet ? (
           <>
             <DialogHeader>
