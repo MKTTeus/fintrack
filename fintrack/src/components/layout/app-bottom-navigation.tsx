@@ -6,7 +6,7 @@ export function AppBottomNavigation() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 pb-[env(safe-area-inset-bottom)] lg:hidden">
       <div className="mx-auto flex max-w-7xl items-stretch justify-between rounded-t-2xl border-t border-border bg-card/95 px-1 py-2 sm:px-4 sm:py-3 backdrop-blur-xl shadow-[0_-10px_30px_rgba(15,23,42,0.3)]">
-        {navItems.slice(0, 5).map((item) => (
+        {navItems.filter(item => item.href !== '/reports' && item.href !== '/settings').slice(0, 5).map((item) => (
           <NavLink
             key={item.label}
             to={item.href}
