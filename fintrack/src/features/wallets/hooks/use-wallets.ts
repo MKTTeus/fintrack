@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
 import { useAuth } from '@/providers/auth-context'
 import { listInvestmentMovements } from '@/features/investments/investment.service'
+import { listFiiMovements } from '@/features/fiis/fii.service'
 import { useTransactions } from '@/features/transactions/hooks/use-transactions'
 
 import { paymentTypeOptions } from '../constants/wallet-options'
@@ -31,6 +32,7 @@ export function useWallets() {
     queryFn: listInvestmentMovements,
     enabled: !loading && !!user,
   })
+  const fiisQuery = useQuery({ queryKey: queryKeys.fiis.movements, queryFn: listFiiMovements, enabled: !loading && !!user })
   const creditCardsQuery = useCreditCards()
   const transfersLedger = useWalletTransfers()
   const cardPaymentsLedger = useCreditCardPayments()
@@ -51,6 +53,8 @@ export function useWallets() {
           transfersLedger.transfers,
           cardPaymentsLedger.payments,
           investmentsQuery.data ?? [],
+        fiisQuery.data ?? [],
+          fiisQuery.data ?? [],
         ),
       ),
     [
@@ -60,6 +64,7 @@ export function useWallets() {
       transfersLedger.transfers,
       cardPaymentsLedger.payments,
       investmentsQuery.data,
+      fiisQuery.data,
     ],
   )
 
@@ -72,6 +77,7 @@ export function useWallets() {
         transfersLedger.transfers,
         cardPaymentsLedger.payments,
         investmentsQuery.data ?? [],
+        fiisQuery.data ?? [],
       ),
     [
       creditCardsQuery.data,
@@ -80,6 +86,7 @@ export function useWallets() {
       transfersLedger.transfers,
       cardPaymentsLedger.payments,
       investmentsQuery.data,
+      fiisQuery.data,
     ],
   )
 
@@ -92,19 +99,20 @@ export function useWallets() {
         cardPaymentsLedger.payments,
         creditCardsQuery.data ?? [],
         investmentsQuery.data ?? [],
+        fiisQuery.data ?? [],
       ),
-    [transactionsQuery.data, walletsQuery.data, transfersLedger.transfers, cardPaymentsLedger.payments, creditCardsQuery.data, investmentsQuery.data],
+    [transactionsQuery.data, walletsQuery.data, transfersLedger.transfers, cardPaymentsLedger.payments, creditCardsQuery.data, investmentsQuery.data, fiisQuery.data],
   )
 
   return {
     isError:
       walletsQuery.isError ||
       transactionsQuery.isError ||
-      creditCardsQuery.isError || investmentsQuery.isError || transfersLedger.query.isError || cardPaymentsLedger.query.isError,
+      creditCardsQuery.isError || investmentsQuery.isError || fiisQuery.isError || transfersLedger.query.isError || cardPaymentsLedger.query.isError,
     isLoading:
       walletsQuery.isLoading ||
       transactionsQuery.isLoading ||
-      creditCardsQuery.isLoading || investmentsQuery.isLoading || transfersLedger.query.isLoading || cardPaymentsLedger.query.isLoading,
+      creditCardsQuery.isLoading || investmentsQuery.isLoading || fiisQuery.isLoading || transfersLedger.query.isLoading || cardPaymentsLedger.query.isLoading,
     creditCardsQuery,
     transfersLedger,
     cardPaymentsLedger,
