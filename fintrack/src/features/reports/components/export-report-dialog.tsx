@@ -212,7 +212,7 @@ export function ExportReportDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] min-w-0 overflow-x-hidden overflow-y-auto rounded-2xl p-4 sm:max-w-2xl sm:p-6">
         <DialogHeader>
           <DialogTitle>Exportar relatório</DialogTitle>
           <DialogDescription>
