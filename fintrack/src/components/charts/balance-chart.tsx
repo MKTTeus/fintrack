@@ -21,7 +21,7 @@ export function BalanceChart() {
     return (
       <div
         className="
-          h-[320px]
+          h-[260px] sm:h-[300px] lg:h-[320px]
           animate-pulse
           rounded-3xl
           bg-card
@@ -39,7 +39,7 @@ export function BalanceChart() {
         title="Evolução do Saldo"
         description="Crescimento financeiro ao longo do tempo"
       >
-        <div className="h-[320px] w-full">
+        <div className="h-[260px] w-full min-w-0 sm:h-[300px] lg:h-[320px]">
           <ChartsEmptyState
             title="Gráfico de Evolução do Saldo"
             description="Conforme você criar transações, poderá acompanhar sua evolução financeira"
@@ -54,12 +54,12 @@ export function BalanceChart() {
       title="Evolução do Saldo"
       description="Crescimento financeiro ao longo do tempo"
     >
-      <div className="h-[320px] w-full">
+      <div className="h-[260px] sm:h-[300px] lg:h-[320px] w-full">
         <ResponsiveContainer
           width="100%"
           height="100%"
         >
-          <AreaChart data={data}>
+          <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient
                 id="balanceGradient"
@@ -93,6 +93,7 @@ export function BalanceChart() {
               fontSize={12}
               tickLine={false}
               axisLine={false}
+              minTickGap={12}
             />
 
             <YAxis
@@ -100,9 +101,12 @@ export function BalanceChart() {
               fontSize={12}
               tickLine={false}
               axisLine={false}
+              width={55}
+              tickFormatter={(value: number) => new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(value)}
             />
 
             <Tooltip
+              formatter={(value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value))}
               contentStyle={{
                 background: 'var(--card)',
                 border:
