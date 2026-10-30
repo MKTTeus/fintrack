@@ -12,8 +12,8 @@ export function GoalSummaryCard({
   const styles = goalSummaryVariantStyles[variant]
 
   return (
-    <div className="group rounded-3xl border border-border bg-card p-6">
-      <div className="flex items-start justify-between gap-4">
+    <div className="group min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
+      <div className="flex min-w-0 items-start justify-between gap-2 sm:gap-4">
         <div className="min-w-0 flex-1">
           <p className="text-sm text-muted-foreground">
             {title}
@@ -25,10 +25,9 @@ export function GoalSummaryCard({
               aria-label={fullValue ?? value}
               className={`
                 max-w-full
-                overflow-hidden
-                whitespace-nowrap
-                text-3xl
-                font-medium
+                break-words
+                text-[clamp(1.35rem,2vw,1.9rem)]
+                font-semibold
                 tracking-tight
                 outline-none
                 ${styles.value}
@@ -76,7 +75,7 @@ export function GoalSummaryCard({
         <div
           className={`
             flex
-            size-12
+            size-10 sm:size-12
             shrink-0
             items-center
             justify-center
