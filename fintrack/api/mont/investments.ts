@@ -20,8 +20,12 @@ const createMovement = z.strictObject({
   amount, movement_date: dateSchema, notes: z.string().trim().max(200).nullable(),
   request_id: requestId,
 })
-const inputSchema = z.discriminatedUnion('action', [createPosition, createMovement])
-const positionFields = 'id,name,kind,institution,notes,created_at'
+const setOpeningBalance = z.strictObject({
+  action: z.literal('set_opening_balance'), position_id: uuid,
+  amount, opening_date: dateSchema, request_id: requestId,
+})
+const inputSchema = z.discriminatedUnion('action', [createPosition, createMovement, setOpeningBalance])
+const positionFields = 'id,name,kind,institution,notes,opening_balance,opening_date,created_at'
 const movementFields = 'id,position_id,wallet_id,kind,amount,movement_date,notes,created_at'
 
 export default {
@@ -59,6 +63,36 @@ export default {
       const input = parsed.data
       const id = transactionId(userId, 'investment_' + input.request_id, sharedSecret)
 
+      if (input.action === 'set_opening_balance') {
+        const { data: position, error: lookupError } = await supabase.from('investment_positions')
+          .select('id,kind,opening_balance,opening_date').eq('id', input.position_id)
+          .eq('user_id', userId).maybeSingle()
+        if (lookupError || !position) throw new ApiError(422, 'invalid_position', 'Investimento inexistente')
+        if (input.opening_date > new Date().toISOString().slice(0, 10)) {
+          throw new ApiError(422, 'invalid_date', 'Data do saldo inicial não pode ser futura')
+        }
+        if (position.opening_date !== null || Number(position.opening_balance) !== 0) {
+          if (position.opening_date === input.opening_date && Number(position.opening_balance) === input.amount) {
+            return jsonResponse({ created: false, position })
+          }
+          throw new ApiError(409, 'opening_already_set', 'Esse investimento já possui saldo inicial')
+        }
+        const { data: earlier, error: movementError } = await supabase.from('investment_movements')
+          .select('id').eq('position_id', input.position_id).eq('user_id', userId)
+          .lte('movement_date', input.opening_date).limit(1)
+        if (movementError) throw new ApiError(502, 'upstream_error', 'Não consegui verificar o histórico do investimento')
+        if (earlier?.length) {
+          throw new ApiError(409, 'opening_date_overlap', 'Existem movimentações anteriores à data do saldo inicial')
+        }
+        const { data: updated, error } = await supabase.from('investment_positions')
+          .update({ opening_balance: input.amount, opening_date: input.opening_date })
+          .eq('id', input.position_id).eq('user_id', userId)
+          .eq('opening_balance', 0).is('opening_date', null)
+          .select(positionFields).maybeSingle()
+        if (error || !updated) throw new ApiError(409, 'opening_conflict', 'Saldo inicial alterado; consulte novamente')
+        return jsonResponse({ created: true, position: updated })
+      }
+
       if (input.action === 'create_position') {
         const { data, error } = await supabase.from('investment_positions').insert({
           id, user_id: userId, name: input.name, kind: input.kind,
@@ -85,6 +119,19 @@ export default {
       if (positionError || !position) throw new ApiError(422, 'invalid_position', 'Investimento inexistente')
       if (walletError || !wallet || !wallet.is_active || wallet.type === 'credit_card') {
         throw new ApiError(422, 'invalid_wallet', 'Escolha uma carteira ativa que não seja cartão de crédito')
+      }
+      // Check deterministic identity before insert: an existing redemption must
+      // be returned without re-running the database's balance validation.
+      const { data: processed, error: processedError } = await supabase.from('investment_movements')
+        .select(movementFields).eq('id', id).eq('user_id', userId).maybeSingle()
+      if (processedError) throw new ApiError(502, 'upstream_error', 'Não consegui verificar duplicidades')
+      if (processed) {
+        if (processed.position_id !== input.position_id || processed.wallet_id !== input.wallet_id ||
+            processed.kind !== input.kind || Number(processed.amount) !== input.amount ||
+            processed.movement_date !== input.movement_date || processed.notes !== input.notes) {
+          throw new ApiError(409, 'idempotency_conflict', 'Solicitação repetida com dados diferentes')
+        }
+        return jsonResponse({ created: false, movement: processed })
       }
       const { data, error } = await supabase.from('investment_movements').insert({
         id, user_id: userId, position_id: input.position_id, wallet_id: input.wallet_id,
