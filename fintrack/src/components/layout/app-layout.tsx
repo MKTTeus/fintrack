@@ -21,13 +21,13 @@ export function AppLayout({
       "
     >
       <UserSettingsThemeSync />
-      <div className="flex">
+      <div className="flex min-w-0">
         <AppSidebar />
 
-        <div className="flex min-h-[100dvh] flex-1 flex-col">
+        <div className="flex min-h-[100dvh] min-w-0 flex-1 flex-col">
           <AppHeader />
 
-          <main className="flex-1 pb-24 px-4 py-4 sm:px-6 lg:px-8 lg:pb-8">
+          <main className="min-w-0 flex-1 px-3 pb-28 pt-5 sm:px-6 sm:pt-6 lg:px-8 lg:pb-8 xl:px-10">
             {children}
           </main>
         </div>
