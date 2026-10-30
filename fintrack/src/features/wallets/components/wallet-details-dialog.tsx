@@ -26,11 +26,11 @@ export function WalletDetailsDialog({
 }: WalletDetailsDialogProps) {
   return (
     <Dialog open={Boolean(wallet)} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] min-w-0 overflow-x-hidden overflow-y-auto rounded-2xl p-4 sm:max-w-2xl sm:p-6">
         {wallet ? (
           <>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-3 text-xl">
+              <DialogTitle className="flex min-w-0 items-center gap-3 break-words text-lg sm:text-xl">
                 <WalletIcon wallet={wallet} />
                 Detalhes - {wallet.name}
               </DialogTitle>
