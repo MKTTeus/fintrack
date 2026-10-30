@@ -14,6 +14,8 @@ import { TransactionsPage } from '@/pages/transactions/transactions-page'
 
 import { WalletsPage } from '@/pages/wallets/wallets-page'
 
+import { InvestmentsPage } from '@/pages/investments/investments-page'
+
 import { LoginPage } from '@/pages/auth/login-page'
 import { ProtectedRoute } from '@/routes/protected-route'
 
@@ -47,6 +49,13 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <WalletsPage />
       </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: '/investments',
+    element: (
+      <ProtectedRoute><InvestmentsPage /></ProtectedRoute>
     ),
   },
 
