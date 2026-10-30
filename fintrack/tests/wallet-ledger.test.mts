@@ -84,3 +84,22 @@ test('historical transactions before last 12 months are retained in cumulative b
   assert.equal(points.length, 12)
   assert.equal(points.at(-1)?.balance, 153)
 })
+
+
+test('applications and redemptions move liquidity without recording ordinary income or expense', () => {
+  const investmentMovements = [
+    { wallet_id: 'a', kind: 'application', amount: 30 },
+    { wallet_id: 'a', kind: 'redemption', amount: 10 },
+    { wallet_id: 'a', kind: 'yield', amount: 2 },
+  ]
+  const current = getAvailableWalletBalance(cashA as any, [], [], [], investmentMovements as any)
+  assert.equal(current, 80) // initial R$100 - R$30 applied + R$10 returned; yield stays invested
+  const invested = 30 - 10 + 2
+  assert.equal(current + invested, 102) // patrimony rises only by a credited yield
+  assert.equal(getTotalAvailableBalance([cashA] as any, [], [], [], investmentMovements as any), 80)
+})
+
+test('a second wallet never inherits an unrelated investment movement', () => {
+  const investmentMovements = [{ wallet_id: 'a', kind: 'application', amount: 25 }]
+  assert.equal(getAvailableWalletBalance(cashB as any, [], [], [], investmentMovements as any), 50)
+})
