@@ -26,7 +26,7 @@ export function ReportsPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-6">
+      <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
         <ReportsFilters
           filterOptions={filterOptions}
           filters={filters}
@@ -38,7 +38,7 @@ export function ReportsPage() {
           summaries={data?.summaries ?? []}
         />
 
-        <div className="grid grid-cols-1 gap-6 2xl:grid-cols-[minmax(0,1.55fr)_minmax(22rem,0.85fr)]">
+        <div className="grid min-w-0 grid-cols-1 gap-4 lg:gap-6 2xl:grid-cols-[minmax(0,1.55fr)_minmax(22rem,0.85fr)]">
           <FinancialEvolutionChart
             data={data?.evolution ?? []}
             isLoading={isLoading}
