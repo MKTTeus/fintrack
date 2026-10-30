@@ -2,6 +2,7 @@ import {
   ArrowLeftRight,
   BarChart3,
   LayoutDashboard,
+  Landmark,
   Settings,
   Target,
   Wallet,
@@ -27,6 +28,11 @@ export const navItems: {
     icon: Wallet,
     label: 'Carteiras',
     href: '/wallets',
+  },
+  {
+    icon: Landmark,
+    label: 'Investimentos',
+    href: '/investments',
   },
   {
     icon: Target,
