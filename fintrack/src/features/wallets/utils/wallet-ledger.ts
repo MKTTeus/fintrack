@@ -37,7 +37,7 @@ export function getAvailableWalletBalance(
         : movement.kind === 'redemption' ? Number(movement.amount) : 0
       : 0), 0)
   const fiiCash = fiis.reduce((sum, movement) => sum + (movement.wallet_id !== wallet.id ? 0 : movement.kind === 'buy' ? -Number(movement.amount) : Number(movement.amount)), 0)
-  return Number(wallet.current_balance) + booked + internal - settlements + invested + fiiCash
+  return Math.round((Number(wallet.current_balance) + booked + internal - settlements + invested + fiiCash) * 100) / 100
 }
 
 export function getTotalAvailableBalance(
@@ -50,6 +50,7 @@ export function getTotalAvailableBalance(
 ): number {
   return wallets.filter(wallet => wallet.is_active && wallet.type !== 'credit_card')
     .reduce((sum, wallet) => sum + getAvailableWalletBalance(wallet, transactions, transfers, payments, investments, fiis), 0)
+    .toFixed(2) * 1
 }
 
 export function getCardOutstanding(
