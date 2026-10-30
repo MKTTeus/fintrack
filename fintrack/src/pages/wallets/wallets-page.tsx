@@ -74,7 +74,7 @@ export function WalletsPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-8">
+      <div className="flex min-w-0 flex-col gap-6 lg:gap-8">
         <WalletSummaryCards summaries={summaries} />
 
         <section className="flex flex-col gap-6">
@@ -88,7 +88,7 @@ export function WalletsPage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto">
             <WalletTransferDialog wallets={wallets} />
             <AddWalletDialog
               isCreating={
