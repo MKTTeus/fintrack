@@ -15,6 +15,7 @@ import { TransactionsPage } from '@/pages/transactions/transactions-page'
 import { WalletsPage } from '@/pages/wallets/wallets-page'
 
 import { InvestmentsPage } from '@/pages/investments/investments-page'
+import { FiisPage } from '@/pages/fiis/fiis-page'
 
 import { LoginPage } from '@/pages/auth/login-page'
 import { ProtectedRoute } from '@/routes/protected-route'
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
     ),
   },
 
+  {
+    path: '/fiis',
+    element: <ProtectedRoute><FiisPage /></ProtectedRoute>,
+  },
   {
     path: '/goals',
     element: (
