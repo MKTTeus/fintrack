@@ -1,4 +1,5 @@
 export const queryKeys = {
+  fiis: { positions: ['fiis', 'positions'] as const, movements: ['fiis', 'movements'] as const },
   investments: {
     positions: ['investments', 'positions'] as const,
     movements: ['investments', 'movements'] as const,
