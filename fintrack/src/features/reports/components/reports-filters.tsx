@@ -124,7 +124,7 @@ export function ReportsFilters({
 
   return (
     <section className="rounded-3xl border border-border bg-card p-4">
-      <div className="grid grid-cols-2 items-end gap-3 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(8rem,0.85fr)_minmax(8rem,0.85fr)]">
+      <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {filters.period === 'custom' ? (
           <div className="grid min-w-0 gap-2">
             <span className="text-xs font-medium text-muted-foreground">
@@ -176,7 +176,7 @@ export function ReportsFilters({
         <Button
           variant="outline"
           size="lg"
-          className="col-span-2 h-10 w-full lg:col-span-1"
+          className="h-10 w-full"
           onClick={clearFilters}
         >
           <FunnelX className="size-4" />
