@@ -9,6 +9,18 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      fii_positions: {
+        Row: { id: string; user_id: string; ticker: string; name: string | null; opening_quantity: number; opening_cost: number | null; opening_date: string | null; market_price: number | null; price_updated_at: string | null; notes: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id: string; ticker: string; name?: string | null; opening_quantity?: number; opening_cost?: number | null; opening_date?: string | null; market_price?: number | null; price_updated_at?: string | null; notes?: string | null }
+        Update: { name?: string | null; market_price?: number | null; price_updated_at?: string | null; notes?: string | null; updated_at?: string }
+        Relationships: []
+      }
+      fii_movements: {
+        Row: { id: string; user_id: string; position_id: string; wallet_id: string; kind: 'buy' | 'sell' | 'dividend'; quantity: number | null; unit_price: number | null; fees: number; amount: number; movement_date: string; notes: string | null; created_at: string }
+        Insert: { id?: string; user_id: string; position_id: string; wallet_id: string; kind: 'buy' | 'sell' | 'dividend'; quantity?: number | null; unit_price?: number | null; fees?: number; amount: number; movement_date?: string; notes?: string | null }
+        Update: { kind?: 'buy' | 'sell' | 'dividend' }
+        Relationships: []
+      }
       wallet_balance_reconciliations: {
         Row: { id: string; user_id: string; wallet_id: string; estimated_before: number; actual_balance: number; adjustment: number; note: string | null; created_at: string }
         Insert: { id?: string; user_id: string; wallet_id: string; estimated_before: number; actual_balance: number; adjustment: number; note?: string | null; created_at?: string }
