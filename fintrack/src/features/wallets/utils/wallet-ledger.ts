@@ -7,6 +7,7 @@ type CashTransaction = Pick<Transaction, 'wallet_id' | 'type' | 'amount'>
 type Transfer = Database['public']['Tables']['wallet_transfers']['Row']
 type CardPayment = Database['public']['Tables']['credit_card_payments']['Row']
 type InvestmentMovement = Database['public']['Tables']['investment_movements']['Row']
+type FiiMovement = Database['public']['Tables']['fii_movements']['Row']
 
 /**
  * Financial basis: wallets.current_balance represents the INITIAL balance.
@@ -19,6 +20,7 @@ export function getAvailableWalletBalance(
   transfers: Transfer[] = [],
   cardPayments: CardPayment[] = [],
   investments: InvestmentMovement[] = [],
+  fiis: FiiMovement[] = [],
 ): number {
   if (wallet.type === 'credit_card') return 0
   const booked = transactions.reduce((sum, tx) =>
@@ -34,7 +36,8 @@ export function getAvailableWalletBalance(
       ? movement.kind === 'application' ? -Number(movement.amount)
         : movement.kind === 'redemption' ? Number(movement.amount) : 0
       : 0), 0)
-  return Number(wallet.current_balance) + booked + internal - settlements + invested
+  const fiiCash = fiis.reduce((sum, movement) => sum + (movement.wallet_id !== wallet.id ? 0 : movement.kind === 'buy' ? -Number(movement.amount) : Number(movement.amount)), 0)
+  return Number(wallet.current_balance) + booked + internal - settlements + invested + fiiCash
 }
 
 export function getTotalAvailableBalance(
@@ -43,9 +46,10 @@ export function getTotalAvailableBalance(
   transfers: Transfer[] = [],
   payments: CardPayment[] = [],
   investments: InvestmentMovement[] = [],
+  fiis: FiiMovement[] = [],
 ): number {
   return wallets.filter(wallet => wallet.is_active && wallet.type !== 'credit_card')
-    .reduce((sum, wallet) => sum + getAvailableWalletBalance(wallet, transactions, transfers, payments, investments), 0)
+    .reduce((sum, wallet) => sum + getAvailableWalletBalance(wallet, transactions, transfers, payments, investments, fiis), 0)
 }
 
 export function getCardOutstanding(
