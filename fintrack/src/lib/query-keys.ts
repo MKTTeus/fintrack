@@ -1,4 +1,8 @@
 export const queryKeys = {
+  investments: {
+    positions: ['investments', 'positions'] as const,
+    movements: ['investments', 'movements'] as const,
+  },
   walletTransfers: { list: ['wallet-transfers', 'list'] as const },
   creditCardPayments: { list: ['credit-card-payments', 'list'] as const },
   transactionCategories: { list: ['transaction-categories', 'list'] as const },
