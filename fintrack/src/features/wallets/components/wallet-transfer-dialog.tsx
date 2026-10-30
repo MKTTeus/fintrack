@@ -14,7 +14,8 @@ import type { WalletItem } from '../types/wallet.types'
 import { useWalletTransfers } from '../hooks/use-wallet-transfers'
 
 function localToday() {
-  return new Date().toLocaleDateString('en-CA')
+  const now = new Date()
+  return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-')
 }
 
 export function WalletTransferDialog({ wallets }: { wallets: WalletItem[] }) {
@@ -32,8 +33,16 @@ export function WalletTransferDialog({ wallets }: { wallets: WalletItem[] }) {
     event.preventDefault()
     setError('')
     const value = Number(amount)
-    if (!origin || !destination || origin === destination || !Number.isFinite(value) || value <= 0) {
+    if (!origin || !destination || origin === destination ||
+      !eligible.some(wallet => wallet.id === origin) ||
+      !eligible.some(wallet => wallet.id === destination) ||
+      !Number.isFinite(value) || value <= 0 || !Number.isInteger(Math.round(value * 100)) ||
+      Math.abs(value * 100 - Math.round(value * 100)) > 1e-7) {
       setError('Selecione duas carteiras diferentes e um valor maior que zero.')
+      return
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(new Date(`${date}T12:00:00`).getTime())) {
+      setError('Informe uma data válida para a transferência.')
       return
     }
     try {
@@ -66,7 +75,7 @@ export function WalletTransferDialog({ wallets }: { wallets: WalletItem[] }) {
         <form onSubmit={submit} className="grid gap-4">
           <div className="grid gap-2">
             <Label>Origem</Label>
-            <Select value={origin} onValueChange={setOrigin}>
+            <Select value={origin} onValueChange={value => { setOrigin(value); if (value === destination) setDestination('') }}>
               <SelectTrigger className="w-full"><SelectValue placeholder="Escolha a carteira de origem" /></SelectTrigger>
               <SelectContent>{eligible.map(w => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}</SelectContent>
             </Select>
