@@ -9,6 +9,12 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      wallet_balance_reconciliations: {
+        Row: { id: string; user_id: string; wallet_id: string; estimated_before: number; actual_balance: number; adjustment: number; note: string | null; created_at: string }
+        Insert: { id?: string; user_id: string; wallet_id: string; estimated_before: number; actual_balance: number; adjustment: number; note?: string | null; created_at?: string }
+        Update: { id?: string; user_id?: string; wallet_id?: string; estimated_before?: number; actual_balance?: number; adjustment?: number; note?: string | null; created_at?: string }
+        Relationships: [{ foreignKeyName: 'wallet_balance_reconciliations_wallet_id_fkey'; columns: ['wallet_id']; referencedRelation: 'wallets'; referencedColumns: ['id'] }]
+      }
       wallet_transfers: {
         Row: {
           id: string
@@ -444,6 +450,7 @@ export interface Database {
     }
     Views: Record<string, never>
     Functions: {
+      reconcile_wallet_balance: { Args: { p_wallet_id: string; p_actual_balance: number; p_note?: string | null }; Returns: Database['public']['Tables']['wallet_balance_reconciliations']['Row'] }
       create_credit_wallet_with_card: {
         Args: {
           p_name: string
