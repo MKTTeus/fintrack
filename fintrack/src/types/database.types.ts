@@ -15,6 +15,21 @@ export interface Database {
         Update: { id?: string; user_id?: string; wallet_id?: string; estimated_before?: number; actual_balance?: number; adjustment?: number; note?: string | null; created_at?: string }
         Relationships: [{ foreignKeyName: 'wallet_balance_reconciliations_wallet_id_fkey'; columns: ['wallet_id']; referencedRelation: 'wallets'; referencedColumns: ['id'] }]
       }
+      investment_positions: {
+        Row: { id: string; user_id: string; name: string; kind: 'cdb' | 'rdb' | 'fixed_income_other'; institution: string | null; notes: string | null; created_at: string }
+        Insert: { id?: string; user_id: string; name: string; kind: 'cdb' | 'rdb' | 'fixed_income_other'; institution?: string | null; notes?: string | null; created_at?: string }
+        Update: { id?: string; user_id?: string; name?: string; kind?: 'cdb' | 'rdb' | 'fixed_income_other'; institution?: string | null; notes?: string | null; created_at?: string }
+        Relationships: []
+      }
+      investment_movements: {
+        Row: { id: string; user_id: string; position_id: string; wallet_id: string; kind: 'application' | 'redemption' | 'yield'; amount: number; movement_date: string; notes: string | null; created_at: string }
+        Insert: { id?: string; user_id: string; position_id: string; wallet_id: string; kind: 'application' | 'redemption' | 'yield'; amount: number; movement_date?: string; notes?: string | null; created_at?: string }
+        Update: { id?: string; user_id?: string; position_id?: string; wallet_id?: string; kind?: 'application' | 'redemption' | 'yield'; amount?: number; movement_date?: string; notes?: string | null; created_at?: string }
+        Relationships: [
+          { foreignKeyName: 'investment_movements_position_user_fk'; columns: ['position_id', 'user_id']; referencedRelation: 'investment_positions'; referencedColumns: ['id', 'user_id'] },
+          { foreignKeyName: 'investment_movements_wallet_fk'; columns: ['wallet_id']; referencedRelation: 'wallets'; referencedColumns: ['id'] },
+        ]
+      }
       wallet_transfers: {
         Row: {
           id: string
