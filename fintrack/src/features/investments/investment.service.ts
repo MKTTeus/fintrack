@@ -78,7 +78,47 @@ export async function createInvestmentMovement(input: NewMovement): Promise<Inve
   if (error) throw new Error(error.message)
   return data
 }
-export function investmentBalance(id: string, movements: InvestmentMovement[]) {
+export function investmentBalance(
+  id: string, movements: InvestmentMovement[], openingBalance = 0,
+) {
   return movements.filter(m => m.position_id === id).reduce((sum, m) =>
-    sum + (m.kind === 'redemption' ? -Number(m.amount) : Number(m.amount)), 0)
+    sum + (m.kind === 'redemption' ? -Number(m.amount) : Number(m.amount)), Number(openingBalance))
+}
+
+/**
+ * A historical starting investment balance is an initial position, not a cash
+ * application. It never debits a wallet or generates income.
+ */
+export async function setInvestmentOpeningBalance(id: string, amount: number, asOfDate: string): Promise<InvestmentPosition> {
+  const user = await currentUser()
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 100_000_000 ||
+      Math.abs(amount * 100 - Math.round(amount * 100)) > 0.000001) {
+    throw new Error('Informe o saldo inicial em reais e centavos.')
+  }
+  const parsed = new Date(asOfDate + 'T00:00:00Z')
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(asOfDate) ||
+      Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== asOfDate ||
+      asOfDate > new Date().toISOString().slice(0, 10)) {
+    throw new Error('Informe a data de referência real do saldo inicial.')
+  }
+  const { data: position, error: positionError } = await supabase.from('investment_positions')
+    .select('id,opening_balance,opening_date').eq('id', id).eq('user_id', user.id).maybeSingle()
+  if (positionError || !position) throw new Error('Investimento não encontrado.')
+  if (Number(position.opening_balance) > 0 || position.opening_date) {
+    throw new Error('Esse investimento já possui saldo inicial registrado. Não é possível duplicá-lo.')
+  }
+  const { data: earlier, error: movementError } = await supabase.from('investment_movements')
+    .select('id').eq('user_id', user.id).eq('position_id', id)
+    .lte('movement_date', asOfDate).limit(1)
+  if (movementError) throw movementError
+  if (earlier?.length) {
+    throw new Error('Existem operações até essa data. Escolha uma data anterior à primeira operação registrada.')
+  }
+  const { data, error } = await supabase.from('investment_positions')
+    .update({ opening_balance: Math.round(amount * 100) / 100, opening_date: asOfDate })
+    .eq('id', id).eq('user_id', user.id).eq('opening_balance', 0).is('opening_date', null)
+    .select('*').maybeSingle()
+  if (error) throw error
+  if (!data) throw new Error('Esse investimento foi alterado. Atualize a página e confira o saldo inicial.')
+  return data
 }
